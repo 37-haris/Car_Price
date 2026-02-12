@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation API • Marché Auto</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width:1000px; margin: 30px auto; padding: 0 16px;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Documentation API</h2>
+          <p class="card-subtitle">Routes / paramètres / réponses — version minimaliste pour la soutenance.</p>
+        </div>
+      </div>
+      <div class="card-content">
+        <p><a href="/" style="text-decoration:none;">← Retour accueil</a> • <a href="/concessionnaires" style="text-decoration:none;">Concessionnaires</a></p>
+
+        <h3 style="margin-top:18px;">1) Prédiction véhicule</h3>
+        <div style="opacity:.85;">POST <code>/api/predict</code></div>
+        <pre style="white-space:pre-wrap;">{
+  "brand": "Peugeot",
+  "model": "208",
+  "fuel": "diesel",
+  "gearbox": "manual",
+  "year": 2019,
+  "mileage_km": 82000,
+  "doors": 5,
+  "seats": 5,
+  "power_hp": 100
+}</pre>
+        <div style="opacity:.85;">200</div>
+        <pre style="white-space:pre-wrap;">{ "predicted_price": 9450 }</pre>
+
+        <h3 style="margin-top:18px;">2) Analyse marché (série)</h3>
+        <div style="opacity:.85;">GET <code>/api/market/price-series?marque=Peugeot&annee=2019&carburant=diesel</code></div>
+        <div style="opacity:.85;">200</div>
+        <pre style="white-space:pre-wrap;">{ "x": ["Jan","Feb"], "y": [12000,11800] }</pre>
+
+        <h3 style="margin-top:18px;">3) Plus grande évolution sur une année</h3>
+        <div style="opacity:.85;">GET <code>/api/market/top-change?marque=Peugeot&carburant=diesel</code></div>
+        <div style="opacity:.85;">200</div>
+        <pre style="white-space:pre-wrap;">{ "year": 2022, "change": 1800 }</pre>
+
+        <h3 style="margin-top:18px;">Codes d'erreurs</h3>
+        <ul>
+          <li><b>400</b> Requête invalide (JSON/paramètres)</li>
+          <li><b>401</b> Non authentifié (si protection activée)</li>
+          <li><b>500</b> Erreur serveur</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='templatemo-glass-admin-script.js') }}"></script>
+</body>
+</html>

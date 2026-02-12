@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics - 3D Glassmorphism Dashboard</title>
+    <title>Concessionnaires • Marché Auto</title>
     <meta name="description" content="3D Glassmorphism Dashboard Template by TemplateMo">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="templatemo-glass-admin-style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
     <!--
 
 TemplateMo 607 Glass Admin
@@ -37,7 +37,7 @@ https://templatemo.com/tm-607-glass-admin
                     <span class="nav-section-title">Main Menu</span>
                     <ul>
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link">
+                            <a href="/" class="nav-link">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
                                     <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -46,16 +46,16 @@ https://templatemo.com/tm-607-glass-admin
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="analytics.html" class="nav-link active">
+                            <a href="/concessionnaires" class="nav-link active">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
                                 </svg>
-                                Analytics
+                                Concessionnaires
                                 <span class="nav-badge">New</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="users.html" class="nav-link">
+                            <a href="/concessionnaires" class="nav-link">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
                                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
@@ -64,7 +64,7 @@ https://templatemo.com/tm-607-glass-admin
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="settings.html" class="nav-link">
+                            <a href="/api/docs" class="nav-link">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="3"/>
                                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -79,7 +79,7 @@ https://templatemo.com/tm-607-glass-admin
                     <span class="nav-section-title">Account</span>
                     <ul>
                         <li class="nav-item">
-                            <a href="login.html" class="nav-link">
+                            <a href="/login" class="nav-link">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                                     <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
@@ -110,11 +110,11 @@ https://templatemo.com/tm-607-glass-admin
             <!-- Top Navbar -->
             <nav class="navbar">
                 <div class="page-header">
-                    <h1 class="page-title">Analytics</h1>
+                    <h1 class="page-title">Concessionnaires</h1>
                     <div class="page-breadcrumb">
-                        <a href="index.html">Dashboard</a>
+                        <a href="/">Dashboard</a>
                         <span>/</span>
-                        <span>Analytics</span>
+                        <span>Concessionnaires</span>
                     </div>
                 </div>
                 <div class="navbar-right">
@@ -161,6 +161,10 @@ https://templatemo.com/tm-607-glass-admin
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                             </svg>
                         </div>
+                    </div>
+                    <div class="card-content" style="margin-top:12px;">
+                      <div style="opacity:.75; margin-bottom:8px;">Série (fallback liste)</div>
+                      <div id="market-series-table"></div>
                     </div>
                 </div>
 
@@ -225,15 +229,23 @@ https://templatemo.com/tm-607-glass-admin
                 <div class="glass-card chart-card">
                     <div class="card-header">
                         <div>
-                            <h2 class="card-title">Traffic Overview</h2>
-                            <p class="card-subtitle">Daily visitors and page views</p>
+                            <h2 class="card-title">
+Analyse du prix du marché</h2>
+                            <p class="card-subtitle">Filtre par marque, année, carburant — et visualise l’évolution moyenne.</p>
                         </div>
-                        <div class="card-actions">
-                            <button class="card-btn">7 Days</button>
-                            <button class="card-btn active">30 Days</button>
-                            <button class="card-btn">90 Days</button>
+                        <div class="card-actions" style="gap:10px; flex-wrap:wrap;">
+                            <select id="market-brand" class="card-btn" style="min-width:160px;">
+                              <option value="">Marque</option>
+                            </select>
+                            <select id="market-year" class="card-btn" style="min-width:120px;">
+                              <option value="">Année</option>
+                            </select>
+                            <select id="market-fuel" class="card-btn" style="min-width:140px;">
+                              <option value="">Carburant</option>
+                            </select>
+                            <button id="btn-market" class="card-btn active" type="button">Analyser</button>
                         </div>
-                    </div>
+
                     <div class="chart-wrapper">
                         <div class="chart-container">
                             <div class="chart-y-axis">
@@ -426,7 +438,151 @@ https://templatemo.com/tm-607-glass-admin
         <p>Copyright © 2026 Your Company. Designed by <a href="https://templatemo.com" target="_blank" rel="nofollow">TemplateMo</a></p>
     </footer>
 
-    <script src="templatemo-glass-admin-script.js"></script>
+    <script src="{{ url_for('static', filename='templatemo-glass-admin-script.js') }}"></script>
     <!-- TemplateMo 607 Glass Admin -->
+
+<script>
+(async function() {
+  // Helpers
+  const $ = (id) => document.getElementById(id);
+  const fillSelect = (selectEl, values) => {
+    // keep first option
+    const first = selectEl.querySelector('option[value=""]');
+    selectEl.innerHTML = '';
+    if (first) selectEl.appendChild(first);
+    for (const v of values) {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectEl.appendChild(opt);
+    }
+  };
+
+  // Static options (tu peux remplacer par fetch /api/options/* si tu ajoutes ces endpoints)
+  const BRANDS = ["Peugeot","Renault","Citroën","Volkswagen","BMW","Mercedes","Audi","Toyota","Ford","Opel"];
+  const FUELS = ["petrol","diesel","hybrid","electric"];
+  const GEARBOXES = ["manual","auto"];
+
+  fillSelect($("brand"), BRANDS);
+  fillSelect($("market-brand"), BRANDS);
+  fillSelect($("fuel"), FUELS);
+  fillSelect($("market-fuel"), FUELS);
+  fillSelect($("gearbox"), GEARBOXES);
+
+  // years
+  const years = [];
+  const now = new Date().getFullYear();
+  for (let y = now; y >= 1990; y--) years.push(String(y));
+  fillSelect($("market-year"), years);
+
+  // Models: version simple (libre par marque)
+  const MODELS_BY_BRAND = {
+    "Peugeot":["208","308","2008","3008","508"],
+    "Renault":["Clio","Captur","Megane","Twingo","Kadjar"],
+    "Citroën":["C3","C4","C5 Aircross","Berlingo"],
+    "Volkswagen":["Polo","Golf","Tiguan","Passat"],
+    "BMW":["116d","118i","320d","X1","X3"],
+    "Mercedes":["A180","C220","GLA","CLA"],
+    "Audi":["A1","A3","A4","Q3","Q5"],
+    "Toyota":["Yaris","Corolla","CH-R","RAV4"],
+    "Ford":["Fiesta","Focus","Kuga","Puma"],
+    "Opel":["Corsa","Astra","Mokka"]
+  };
+
+  const refreshModels = () => {
+    const b = $("brand").value;
+    const models = MODELS_BY_BRAND[b] || [];
+    fillSelect($("model"), models);
+  };
+  $("brand").addEventListener("change", refreshModels);
+  refreshModels();
+
+  // Predict submit
+  $("predict-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    $("predict-status").textContent = "Calcul en cours...";
+    $("predict-result").textContent = "—";
+
+    const payload = {
+      brand: $("brand").value,
+      model: $("model").value,
+      fuel: $("fuel").value,
+      gearbox: $("gearbox").value,
+      doors: $("doors").value ? Number($("doors").value) : null,
+      seats: $("seats").value ? Number($("seats").value) : null,
+      year: Number($("year").value),
+      mileage_km: Number($("mileage_km").value),
+      power_hp: $("power_hp").value ? Number($("power_hp").value) : null
+    };
+
+    // Remove nulls for cleanliness
+    Object.keys(payload).forEach(k => (payload[k] === null || payload[k] === "") && delete payload[k]);
+
+    try {
+      const res = await fetch("/api/predict", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || data.error || "Erreur API");
+      const price = data.predicted_price || data.predicted_price_eur || data.predicted_price_eur;
+      $("predict-result").textContent = (price !== undefined) ? `${price.toLocaleString("fr-FR")} €` : "—";
+      $("predict-status").textContent = "OK";
+    } catch(err) {
+      $("predict-status").textContent = "Erreur: " + err.message;
+    }
+  });
+
+  // Market analysis
+  $("btn-market")?.addEventListener("click", async () => {
+    const marque = $("market-brand").value;
+    const annee = $("market-year").value;
+    const carburant = $("market-fuel").value;
+    if (!marque || !annee || !carburant) return alert("Sélectionne marque + année + carburant.");
+
+    try {
+      const res = await fetch(`/api/market/price-series?marque=${encodeURIComponent(marque)}&annee=${encodeURIComponent(annee)}&carburant=${encodeURIComponent(carburant)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || data.error || "Erreur API");
+      // Display as a simple list under chart (fallback)
+      const target = document.getElementById("market-series-table");
+      if (target) {
+        target.innerHTML = "";
+        for (let i=0;i<data.x.length;i++){
+          const row = document.createElement("div");
+          row.style.display="flex";
+          row.style.justifyContent="space-between";
+          row.style.padding="6px 0";
+          row.style.borderBottom="1px solid rgba(255,255,255,0.08)";
+          row.innerHTML = `<span>${data.x[i]}</span><span><b>${Number(data.y[i]).toLocaleString("fr-FR")} €</b></span>`;
+          target.appendChild(row);
+        }
+      }
+    } catch(err) {
+      alert(err.message);
+    }
+  });
+
+  $("btn-topchange")?.addEventListener("click", async () => {
+    const marque = $("market-brand").value;
+    const carburant = $("market-fuel").value;
+    if (!marque || !carburant) return alert("Sélectionne marque + carburant.");
+
+    try {
+      const res = await fetch(`/api/market/top-change?marque=${encodeURIComponent(marque)}&carburant=${encodeURIComponent(carburant)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || data.error || "Erreur API");
+      const sign = (data.change ?? 0) >= 0 ? "+" : "";
+      $("topchange-result").textContent = `${sign}${Number(data.change).toLocaleString("fr-FR")} €`;
+      $("topchange-details").textContent = `Année: ${data.year} • Marque: ${data.marque} • Carburant: ${data.carburant}`;
+    } catch(err) {
+      alert(err.message);
+    }
+  });
+
+})();
+</script>
+
 </body>
 </html>
