@@ -1,4 +1,4 @@
-Location,Year,Kilometers_Driven,Fuel_Type,Transmission,Owner_Type,Mileage,Engine,Power,Seats,Price,Brand,Model,car_age,km/age
+Location,Year,Kilometers_Driven,Fuel_Type,Transmission,Owner_Type,Consumation,Engine,Power,Seats,Price,Brand,Model,car_age,km/age
 Mumbai,2010,72000,CNG,Manual,First,26.6,998,58.16,5,1.75,Maruti,Wagon R LXI CNG,16,4500.0
 Pune,2015,41000,Diesel,Manual,First,19.67,1582,126.2,5,12.5,Hyundai,Creta 1.6 CRDi SX Option,11,3727.2727272727275
 Chennai,2011,46000,Petrol,Manual,First,18.2,1199,88.7,5,4.5,Honda,Jazz V,15,3066.6666666666665
