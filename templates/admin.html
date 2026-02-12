@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin • Marché Auto</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width:1100px; margin: 30px auto; padding: 0 16px;">
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Administration</h2>
+          <p class="card-subtitle">Valider / révoquer l’accès des comptes concessionnaires.</p>
+        </div>
+        <div class="card-actions" style="gap:10px;">
+          <a class="card-btn" href="/concessionnaires" style="text-decoration:none;">Concessionnaires</a>
+          <a class="card-btn" href="/logout" style="text-decoration:none;">Déconnexion</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Comptes en attente</h2>
+          <p class="card-subtitle">Ces comptes n’ont pas accès tant qu’ils ne sont pas approuvés.</p>
+        </div>
+      </div>
+      <div class="card-content">
+        {% if not pending %}
+          <div style="opacity:.8;">Aucun compte en attente.</div>
+        {% else %}
+          <div style="display:grid; gap:10px;">
+            {% for u in pending %}
+              <div class="card">
+                <div class="card-content" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+                  <div>
+                    <div style="font-weight:800;">{{ u.email }}</div>
+                    <div style="opacity:.75; font-size:14px;">Créé le {{ u.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                  </div>
+                  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <form method="POST" action="/admin/approve/{{ u.id }}">
+                      <button class="card-btn active" type="submit">Approuver</button>
+                    </form>
+                    <form method="POST" action="/admin/delete/{{ u.id }}" onsubmit="return confirm('Supprimer ce compte ?');">
+                      <button class="card-btn" type="submit">Supprimer</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Comptes approuvés</h2>
+          <p class="card-subtitle">Ces comptes ont accès à l’outil.</p>
+        </div>
+      </div>
+      <div class="card-content">
+        {% if not approved %}
+          <div style="opacity:.8;">Aucun compte approuvé.</div>
+        {% else %}
+          <div style="display:grid; gap:10px;">
+            {% for u in approved %}
+              <div class="card">
+                <div class="card-content" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+                  <div>
+                    <div style="font-weight:800;">{{ u.email }}</div>
+                    <div style="opacity:.75; font-size:14px;">Approuvé</div>
+                  </div>
+                  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <form method="POST" action="/admin/revoke/{{ u.id }}">
+                      <button class="card-btn" type="submit">Révoquer</button>
+                    </form>
+                    <form method="POST" action="/admin/delete/{{ u.id }}" onsubmit="return confirm('Supprimer ce compte ?');">
+                      <button class="card-btn" type="submit">Supprimer</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='templatemo-glass-admin-script.js') }}"></script>
+</body>
+</html>

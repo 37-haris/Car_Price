@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accueil • Marché Auto d’Occasion</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width:1100px; margin: 30px auto; padding: 0 16px;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Marché Auto d’Occasion</h2>
+          <p class="card-subtitle">
+            Outil concessionnaires : analyse du marché + prédiction du prix d’un véhicule.
+          </p>
+        </div>
+        <div class="card-actions" style="gap:10px;">
+          <a class="card-btn active" href="/login" style="text-decoration:none;">Se connecter</a>
+          <a class="card-btn" href="/api/docs" style="text-decoration:none;">Documentation API</a>
+        </div>
+      </div>
+
+      <div class="card-content" style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px;">
+        <div class="card">
+          <div class="card-content">
+            <div style="font-size:14px; opacity:.75;">Module 1</div>
+            <div style="font-size:18px; font-weight:800; margin-top:6px;">Analyse du prix du marché</div>
+            <div style="margin-top:8px; opacity:.85;">
+              Graphique d’évolution des prix selon marque / année / carburant + plus grande évolution annuelle.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <div style="font-size:14px; opacity:.75;">Module 2</div>
+            <div style="font-size:18px; font-weight:800; margin-top:6px;">Prédiction d’un véhicule</div>
+            <div style="margin-top:8px; opacity:.85;">
+              Saisie des features les plus importantes (menus déroulants + année/kilométrage) → prix estimé.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <div style="font-size:14px; opacity:.75;">API</div>
+            <div style="font-size:18px; font-weight:800; margin-top:6px;">API REST + Doc en ligne</div>
+            <div style="margin-top:8px; opacity:.85;">
+              Routes / paramètres / codes / erreurs accessibles via <b>/api/docs</b>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-content" style="margin-top:14px; opacity:.8;">
+        <b>Note :</b> l’estimation dépend des données et ne remplace pas une expertise (état du véhicule, entretien, négociation…).
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='templatemo-glass-admin-script.js') }}"></script>
+</body>
+</html>

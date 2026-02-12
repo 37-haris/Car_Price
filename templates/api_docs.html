@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation API • Marché Auto</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width:1100px; margin: 30px auto; padding: 0 16px;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Documentation API</h2>
+          <p class="card-subtitle">Routes / paramètres / codes / erreurs (précis et suffisant pour soutenance).</p>
+        </div>
+        <div class="card-actions" style="gap:10px;">
+          <a class="card-btn" href="/" style="text-decoration:none;">Accueil</a>
+          <a class="card-btn active" href="/concessionnaires" style="text-decoration:none;">Concessionnaires</a>
+        </div>
+      </div>
+
+      <div class="card-content">
+        <h3>Authentification (Web)</h3>
+        <ul>
+          <li><b>GET</b> <code>/login</code> : page de connexion</li>
+          <li><b>POST</b> <code>/login</code> : envoi email/password</li>
+          <li><b>GET</b> <code>/logout</code> : déconnexion</li>
+        </ul>
+
+        <h3 style="margin-top:18px;">1) Prédiction véhicule</h3>
+        <div><b>POST</b> <code>/api/predict</code></div>
+        <div style="opacity:.8; margin:6px 0;">Body JSON (features clés)</div>
+        <pre style="white-space:pre-wrap;">{
+  "brand": "Peugeot",
+  "model": "208",
+  "fuel": "diesel",
+  "gearbox": "manual",
+  "year": 2019,
+  "mileage_km": 82000,
+  "doors": 5,
+  "seats": 5,
+  "power_hp": 100
+}</pre>
+
+        <div style="opacity:.8; margin:6px 0;">Réponse 200</div>
+        <pre style="white-space:pre-wrap;">{ "predicted_price_eur": 9450 }</pre>
+
+        <h3 style="margin-top:18px;">2) Analyse marché – série (évolution)</h3>
+        <div><b>GET</b> <code>/api/market/price-series?marque=Peugeot&annee=2019&carburant=diesel</code></div>
+        <div style="opacity:.8; margin:6px 0;">Réponse 200</div>
+        <pre style="white-space:pre-wrap;">{
+  "filters": {"marque":"Peugeot","annee":"201

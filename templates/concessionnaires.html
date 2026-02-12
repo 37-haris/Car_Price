@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concessionnaires • Marché Auto</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width:1100px; margin: 30px auto; padding: 0 16px;">
+
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Espace Concessionnaires</h2>
+          <p class="card-subtitle">Analyse du marché + prédiction spécifique d’un véhicule.</p>
+        </div>
+        <div class="card-actions" style="gap:10px;">
+          <a class="card-btn" href="/api/docs" style="text-decoration:none;">Doc API</a>
+          <a class="card-btn" href="/logout" style="text-decoration:none;">Déconnexion</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1) Analyse marché -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Analyse du prix du marché</h2>
+          <p class="card-subtitle">Série selon marque, année, carburant.</p>
+        </div>
+        <div class="card-actions" style="gap:10px; flex-wrap:wrap;">
+          <select id="market-brand" class="card-btn" style="min-width:160px;">
+            <option value="">Marque</option>
+          </select>
+          <select id="market-year" class="card-btn" style="min-width:120px;">
+            <option value="">Année</option>
+          </select>
+          <select id="market-fuel" class="card-btn" style="min-width:140px;">
+            <option value="">Carburant</option>
+          </select>
+          <button id="btn-market" class="card-btn active" type="button">Analyser</button>
+        </div>
+      </div>
+
+      <div class="card-content">
+        <div style="opacity:.75; margin-bottom:8px;">Série (fallback liste)</div>
+        <div id="market-series-table"></div>
+      </div>
+    </div>
+
+    <!-- 2) Plus grande évolution annuelle -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Plus grande évolution sur une année</h2>
+          <p class="card-subtitle">Selon marque + carburant sélectionnés.</p>
+        </div>
+        <div class="card-actions">
+          <button id="btn-topchange" class="card-btn active" type="button">Calculer</button>
+        </div>
+      </div>
+      <div class="card-content">
+        <div id="topchange-result" style="font-size: 18px; font-weight: 700;">—</div>
+        <div id="topchange-details" style="opacity:.8; margin-top:6px;">—</div>
+      </div>
+    </div>
+
+    <!-- 3) Prédiction véhicule -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Prédiction spécifique d’un véhicule</h2>
+          <p class="card-subtitle">Menus déroulants + saisies précises (année, kilométrage).</p>
+        </div>
+      </div>
+
+      <div class="card-content">
+        <form id="predict-form" style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px;">
+          <div>
+            <label style="display:block; margin-bottom:6px;">Marque</label>
+            <select id="brand" required style="width:100%; padding:10px; border-radius:10px;">
+              <option value="">Sélectionner</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Modèle</label>
+            <select id="model" required style="width:100%; padding:10px; border-radius:10px;">
+              <option value="">Sélectionner</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Carburant</label>
+            <select id="fuel" required style="width:100%; padding:10px; border-radius:10px;">
+              <option value="">Sélectionner</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Boîte</label>
+            <select id="gearbox" required style="width:100%; padding:10px; border-radius:10px;">
+              <option value="">Sélectionner</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Portes</label>
+            <select id="doors" style="width:100%; padding:10px; border-radius:10px;">
+              <option value="">—</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Places</label>
+            <select id="seats" style="width:100%; padding:10px; border-radius:10px;">
+              <option value="">—</option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="7">7</option>
+              <option value="9">9</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Année</label>
+            <input id="year" type="number" min="1990" max="2026" step="1" required
+                   placeholder="ex: 2019" style="width:100%; padding:10px; border-radius:10px;">
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Kilométrage (km)</label>
+            <input id="mileage_km" type="number" min="0" max="500000" step="1000" required
+                   placeholder="ex: 82000" style="width:100%; padding:10px; border-radius:10px;">
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Puissance (ch)</label>
+            <input id="power_hp" type="number" min="0" max="1000" step="1"
+                   placeholder="optionnel" style="width:100%; padding:10px; border-radius:10px;">
+          </div>
+
+          <div style="grid-column: 1 / -1; display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:6px;">
+            <button class="card-btn active" type="submit">Prédire</button>
+            <div id="predict-status" style="opacity:.85;">—</div>
+          </div>
+        </form>
+
+        <div class="card" style="margin-top:14px;">
+          <div class="card-content">
+            <div style="font-size:14px; opacity:.75;">Prix estimé</div>
+            <div id="predict-result" style="font-size:34px; font-weight:900;">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      const fillSelect = (selectEl, values) => {
+        const first = selectEl.querySelector('option[value=""]');
+        selectEl.innerHTML = '';
+        if (first) selectEl.appendChild(first);
+        values.forEach(v => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v;
+          selectEl.appendChild(opt);
+        });
+      };
+
+      // ✅ Menus déroulants (version simple, en dur)
+      const BRANDS = ["Peugeot","Renault","Citroën","Volkswagen","BMW","Mercedes","Audi","Toyota","Ford","Opel"];
+      const FUELS = ["petrol","diesel","hybrid","electric"];
+      const GEARBOXES = ["manual","auto"];
+
+      const MODELS_BY_BRAND = {
+        "Peugeot":["208","308","2008","3008","508"],
+        "Renault":["Clio","Captur","Megane","Twingo","Kadjar"],
+        "Citroën":["C3","C4","C5 Aircross","Berlingo"],
+        "Volkswagen":["Polo","Golf","Tiguan","Passat"],
+        "BMW":["116d","118i","320d","X1","X3"],
+        "Mercedes":["A180","C220","GLA","CLA"],
+        "Audi":["A1","A3","A4","Q3","Q5"],
+        "Toyota":["Yaris","Corolla","CH-R","RAV4"],
+        "Ford":["Fiesta","Focus","Kuga","Puma"],
+        "Opel":["Corsa","Astra","Mokka"]
+      };
+
+      // Remplissage des selects
+      fillSelect($("brand"), BRANDS);
+      fillSelect($("market-brand"), BRANDS);
+
+      fillSelect($("fuel"), FUELS);
+      fillSelect($("market-fuel"), FUELS);
+
+      fillSelect($("gearbox"), GEARBOXES);
+
+      // Années (analyse)
+      const years = [];
+      const now = new Date().getFullYear();
+      for (let y = now; y >= 1990; y--) years.push(String(y));
+      fillSelect($("market-year"), years);
+
+      // Modèles filtrés par marque
+      const refreshModels = () => {
+        const b = $("brand").value;
+        fillSelect($("model"), MODELS_BY_BRAND[b] || []);
+      };
+      $("brand").addEventListener("change", refreshModels);
+      refreshModels();
+
+      // Submit predict
+      $("predict-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        $("predict-status").textContent = "Calcul en cours...";
+        $("predict-result").textContent = "—";
+
+        const payload = {
+          brand: $("brand").value,
+          model: $("model").value,
+          fuel: $("fuel").value,
+          gearbox: $("gearbox").value,
+          year: Number($("year").value),
+          mileage_km: Number($("mileage_km").value)
+        };
+        if ($("doors").value) payload.doors = Number($("doors").value);
+        if ($("seats").value) payload.seats = Number($("seats").value);
+        if ($("power_hp").value) payload.power_hp = Number($("power_hp").value);
+
+        try {
+          const res = await fetch("/api/predict", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.details || data.message || data.error || "Erreur API");
+
+          const price = data.predicted_price_eur ?? data.predicted_price;
+          $("predict-result").textContent = `${Number(price).toLocaleString("fr-FR")} €`;
+          $("predict-status").textContent = "OK";
+        } catch (err) {
+          $("predict-status").textContent = "Erreur: " + err.message;
+        }
+      });
+
+      // Analyse marché (fallback liste)
+      $("btn-market").addEventListener("click", async () => {
+        const marque = $("market-brand").value;
+        const annee = $("market-year").value;
+        const carburant = $("market-fuel").value;
+        if (!marque || !annee || !carburant) return alert("Sélectionne marque + année + carburant.");
+
+        try {
+          const res = await fetch(`/api/market/price-series?marque=${encodeURIComponent(marque)}&annee=${encodeURIComponent(annee)}&carburant=${encodeURIComponent(carburant)}`);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.details || data.message || data.error || "Erreur API");
+
+          const target = $("market-series-table");
+          target.innerHTML = "";
+          (data.x || []).forEach((label, i) => {
+            const val = (data.y || [])[i];
+            const row = document.createElement("div");
+            row.style.display = "flex";
+            row.style.justifyContent = "space-between";
+            row.style.padding = "6px 0";
+            row.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
+            row.innerHTML = `<span>${label}</span><span><b>${Number(val).toLocaleString("fr-FR")} €</b></span>`;
+            target.appendChild(row);
+          });
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+
+      // Plus grande évolution
+      $("btn-topchange").addEventListener("click", async () => {
+        const marque = $("market-brand").value;
+        const carburant = $("market-fuel").value;
+        if (!marque || !carburant) return alert("Sélectionne marque + carburant.");
+
+        try {
+          const res = await fetch(`/api/market/top-change?marque=${encodeURIComponent(marque)}&carburant=${encodeURIComponent(carburant)}`);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.details || data.message || data.error || "Erreur API");
+
+          const change = data.change_eur ?? data.change ?? 0;
+          const sign = change >= 0 ? "+" : "";
+          $("topchange-result").textContent = `${sign}${Number(change).toLocaleString("fr-FR")} €`;
+          $("topchange-details").textContent = `Année: ${data.year} • Marque: ${marque} • Carburant: ${carburant}`;
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>

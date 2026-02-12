@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion • Marché Auto</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width:520px; margin: 40px auto; padding: 0 16px;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Connexion</h2>
+          <p class="card-subtitle">Accès réservé aux concessionnaires.</p>
+        </div>
+      </div>
+
+      <div class="card-content">
+        {% if error %}
+          <div style="margin-bottom:12px; padding:10px 12px; border-radius:10px; background: rgba(255,0,0,0.12);">
+            {{ error }}
+          </div>
+        {% endif %}
+
+        <form method="POST" action="/login" style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="display:block; margin-bottom:6px;">Email</label>
+            <input type="email" name="email" required placeholder="ex: admin@demo.com"
+                   style="width:100%; padding:10px; border-radius:10px;">
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:6px;">Mot de passe</label>
+            <input type="password" name="password" required placeholder="ex: demo123"
+                   style="width:100%; padding:10px; border-radius:10px;">
+          </div>
+
+          <button class="card-btn active" type="submit" style="width:100%;">Se connecter</button>
+        </form>
+
+        <div style="margin-top:14px; opacity:.8;">
+          <a href="/" style="text-decoration:none;">← Retour accueil</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='templatemo-glass-admin-script.js') }}"></script>
+</body>
+</html>
+<a href="/register" style="text-decoration:none;">Créer un compte</a>
