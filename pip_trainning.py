@@ -50,6 +50,7 @@ def pip_test(csv_path=path,model=model,grid=Grid_pipe,num=first_train_num,cat=fi
         estimator=pipe,
         param_distributions=grid,
         n_jobs = -1,
+        n_iter=600,
         verbose=1,
         cv=5,
         scoring="neg_root_mean_squared_error"
@@ -62,5 +63,3 @@ def pip_test(csv_path=path,model=model,grid=Grid_pipe,num=first_train_num,cat=fi
     
     return train.best_score_, train.best_params_, train.best_estimator_,r2,rmse
 
-score,params,estimator,r2,rmse = pip_test()
-print(r2)
