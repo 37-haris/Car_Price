@@ -6,9 +6,11 @@
   <title>Concessionnaires • Marché Auto</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
 </head>
+
 <body>
   <div class="container" style="max-width:1100px; margin: 30px auto; padding: 0 16px;">
 
+    <!-- HEADER -->
     <div class="card" style="margin-bottom:14px;">
       <div class="card-header">
         <div>
@@ -22,151 +24,173 @@
       </div>
     </div>
 
-    <!-- 1) Analyse marché -->
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Analyse du prix du marché</h2>
-          <p class="card-subtitle">Série selon marque, année, carburant.</p>
-        </div>
-        <div class="card-actions" style="gap:10px; flex-wrap:wrap;">
-          <select id="market-brand" class="card-btn" style="min-width:160px;">
-            <option value="">Marque</option>
-          </select>
-          <select id="market-year" class="card-btn" style="min-width:120px;">
-            <option value="">Année</option>
-          </select>
-          <select id="market-fuel" class="card-btn" style="min-width:140px;">
-            <option value="">Carburant</option>
-          </select>
-          <button id="btn-market" class="card-btn active" type="button">Analyser</button>
-        </div>
-      </div>
-
-      <div class="card-content">
-        <div style="opacity:.75; margin-bottom:8px;">Série (fallback liste)</div>
-        <div id="market-series-table"></div>
-      </div>
-    </div>
-
-    <!-- 2) Plus grande évolution annuelle -->
-    <div class="card" style="margin-top:14px;">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Plus grande évolution sur une année</h2>
-          <p class="card-subtitle">Selon marque + carburant sélectionnés.</p>
-        </div>
-        <div class="card-actions">
-          <button id="btn-topchange" class="card-btn active" type="button">Calculer</button>
-        </div>
-      </div>
-      <div class="card-content">
-        <div id="topchange-result" style="font-size: 18px; font-weight: 700;">—</div>
-        <div id="topchange-details" style="opacity:.8; margin-top:6px;">—</div>
-      </div>
-    </div>
-
-    <!-- 3) Prédiction véhicule -->
-    <div class="card" style="margin-top:14px;">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Prédiction spécifique d’un véhicule</h2>
-          <p class="card-subtitle">Menus déroulants + saisies précises (année, kilométrage).</p>
-        </div>
-      </div>
-
-      <div class="card-content">
-        <form id="predict-form" style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px;">
+    <!-- 1) ANALYSE MARCHE -->
+    <section class="section-content">
+      <div class="card">
+        <div class="card-header">
           <div>
-            <label style="display:block; margin-bottom:6px;">Marque</label>
-            <select id="brand" required style="width:100%; padding:10px; border-radius:10px;">
-              <option value="">Sélectionner</option>
+            <h2 class="card-title">Analyse du prix du marché</h2>
+            <p class="card-subtitle">
+              Filtre par marque, année et carburant — visualise l’évolution moyenne.
+            </p>
+          </div>
+
+          <div class="card-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <select id="market-brand" class="card-btn">
+              <option value="">Marque</option>
             </select>
-          </div>
 
-          <div>
-            <label style="display:block; margin-bottom:6px;">Modèle</label>
-            <select id="model" required style="width:100%; padding:10px; border-radius:10px;">
-              <option value="">Sélectionner</option>
+            <select id="market-year" class="card-btn">
+              <option value="">Année</option>
             </select>
-          </div>
 
-          <div>
-            <label style="display:block; margin-bottom:6px;">Carburant</label>
-            <select id="fuel" required style="width:100%; padding:10px; border-radius:10px;">
-              <option value="">Sélectionner</option>
+            <select id="market-fuel" class="card-btn">
+              <option value="">Carburant</option>
             </select>
-          </div>
 
-          <div>
-            <label style="display:block; margin-bottom:6px;">Boîte</label>
-            <select id="gearbox" required style="width:100%; padding:10px; border-radius:10px;">
-              <option value="">Sélectionner</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="display:block; margin-bottom:6px;">Portes</label>
-            <select id="doors" style="width:100%; padding:10px; border-radius:10px;">
-              <option value="">—</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="display:block; margin-bottom:6px;">Places</label>
-            <select id="seats" style="width:100%; padding:10px; border-radius:10px;">
-              <option value="">—</option>
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="7">7</option>
-              <option value="9">9</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="display:block; margin-bottom:6px;">Année</label>
-            <input id="year" type="number" min="1990" max="2026" step="1" required
-                   placeholder="ex: 2019" style="width:100%; padding:10px; border-radius:10px;">
-          </div>
-
-          <div>
-            <label style="display:block; margin-bottom:6px;">Kilométrage (km)</label>
-            <input id="mileage_km" type="number" min="0" max="500000" step="1000" required
-                   placeholder="ex: 82000" style="width:100%; padding:10px; border-radius:10px;">
-          </div>
-
-          <div>
-            <label style="display:block; margin-bottom:6px;">Puissance (ch)</label>
-            <input id="power_hp" type="number" min="0" max="1000" step="1"
-                   placeholder="optionnel" style="width:100%; padding:10px; border-radius:10px;">
-          </div>
-
-          <div style="grid-column: 1 / -1; display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:6px;">
-            <button class="card-btn active" type="submit">Prédire</button>
-            <div id="predict-status" style="opacity:.85;">—</div>
-          </div>
-        </form>
-
-        <div class="card" style="margin-top:14px;">
-          <div class="card-content">
-            <div style="font-size:14px; opacity:.75;">Prix estimé</div>
-            <div id="predict-result" style="font-size:34px; font-weight:900;">—</div>
+            <button id="btn-market" class="card-btn active" type="button">
+              Analyser
+            </button>
           </div>
         </div>
-      </div>
-    </div>
 
-  </div>
+        <div class="card-content">
+          <div style="opacity:.75; margin-bottom:8px;">Série (fallback liste)</div>
+          <div id="market-series-table"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2) PLUS GRANDE EVOLUTION (UN SEUL BLOC, PAS DE DOUBLON) -->
+    <section class="section-content" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Plus grande évolution sur une année</h2>
+            <p class="card-subtitle">
+              Calcul basé sur la marque et le carburant sélectionnés.
+            </p>
+          </div>
+
+          <div class="card-actions">
+            <button id="btn-topchange" class="card-btn active" type="button">
+              Calculer
+            </button>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div id="topchange-result" style="font-size:20px; font-weight:700;">—</div>
+          <div id="topchange-details" style="opacity:.8; margin-top:6px;">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3) PREDICTION VEHICULE -->
+    <section class="section-content" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Prédiction spécifique d’un véhicule</h2>
+            <p class="card-subtitle">Menus déroulants + saisies précises (année, kilométrage).</p>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <form id="predict-form" style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px;">
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Marque</label>
+              <select id="brand" required style="width:100%; padding:10px; border-radius:10px;">
+                <option value="">Sélectionner</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Modèle</label>
+              <select id="model" required style="width:100%; padding:10px; border-radius:10px;">
+                <option value="">Sélectionner</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Carburant</label>
+              <select id="fuel" required style="width:100%; padding:10px; border-radius:10px;">
+                <option value="">Sélectionner</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Boîte</label>
+              <select id="gearbox" required style="width:100%; padding:10px; border-radius:10px;">
+                <option value="">Sélectionner</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Portes</label>
+              <select id="doors" style="width:100%; padding:10px; border-radius:10px;">
+                <option value="">—</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Places</label>
+              <select id="seats" style="width:100%; padding:10px; border-radius:10px;">
+                <option value="">—</option>
+                <option value="2">2</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="9">9</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Année</label>
+              <input id="year" type="number" min="1990" max="2026" step="1" required
+                     placeholder="ex: 2019" style="width:100%; padding:10px; border-radius:10px;">
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Kilométrage (km)</label>
+              <input id="mileage_km" type="number" min="0" max="500000" step="1000" required
+                     placeholder="ex: 82000" style="width:100%; padding:10px; border-radius:10px;">
+            </div>
+
+            <div>
+              <label style="display:block; margin-bottom:6px;">Puissance (ch)</label>
+              <input id="power_hp" type="number" min="0" max="1000" step="1"
+                     placeholder="optionnel" style="width:100%; padding:10px; border-radius:10px;">
+            </div>
+
+            <div style="grid-column: 1 / -1; display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:6px;">
+              <button class="card-btn active" type="submit">Prédire</button>
+              <div id="predict-status" style="opacity:.85;">—</div>
+            </div>
+          </form>
+
+          <div class="card" style="margin-top:14px;">
+            <div class="card-content">
+              <div style="font-size:14px; opacity:.75;">Prix estimé</div>
+              <div id="predict-result" style="font-size:34px; font-weight:900;">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div> <!-- /container -->
 
   <script>
     (function() {
       const $ = (id) => document.getElementById(id);
 
       const fillSelect = (selectEl, values) => {
+        if (!selectEl) return;
         const first = selectEl.querySelector('option[value=""]');
         selectEl.innerHTML = '';
         if (first) selectEl.appendChild(first);
@@ -178,7 +202,7 @@
         });
       };
 
-      // ✅ Menus déroulants (version simple, en dur)
+      // Menus déroulants (simple, en dur)
       const BRANDS = ["Peugeot","Renault","Citroën","Volkswagen","BMW","Mercedes","Audi","Toyota","Ford","Opel"];
       const FUELS = ["petrol","diesel","hybrid","electric"];
       const GEARBOXES = ["manual","auto"];
@@ -213,14 +237,14 @@
 
       // Modèles filtrés par marque
       const refreshModels = () => {
-        const b = $("brand").value;
-        fillSelect($("model"), MODELS_BY_BRAND[b] || []);
+        const brand = $("brand")?.value;
+        fillSelect($("model"), MODELS_BY_BRAND[brand] || []);
       };
-      $("brand").addEventListener("change", refreshModels);
+      $("brand")?.addEventListener("change", refreshModels);
       refreshModels();
 
-      // Submit predict
-      $("predict-form").addEventListener("submit", async (e) => {
+      // Prediction
+      $("predict-form")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         $("predict-status").textContent = "Calcul en cours...";
         $("predict-result").textContent = "—";
@@ -255,7 +279,7 @@
       });
 
       // Analyse marché (fallback liste)
-      $("btn-market").addEventListener("click", async () => {
+      $("btn-market")?.addEventListener("click", async () => {
         const marque = $("market-brand").value;
         const annee = $("market-year").value;
         const carburant = $("market-fuel").value;
@@ -284,7 +308,7 @@
       });
 
       // Plus grande évolution
-      $("btn-topchange").addEventListener("click", async () => {
+      $("btn-topchange")?.addEventListener("click", async () => {
         const marque = $("market-brand").value;
         const carburant = $("market-fuel").value;
         if (!marque || !carburant) return alert("Sélectionne marque + carburant.");
@@ -305,5 +329,6 @@
 
     })();
   </script>
+
 </body>
 </html>
