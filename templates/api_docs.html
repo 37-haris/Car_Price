@@ -6,6 +6,7 @@
   <title>Documentation API • Marché Auto</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='templatemo-glass-admin-style.css') }}">
 </head>
+
 <body>
   <div class="container" style="max-width:1100px; margin: 30px auto; padding: 0 16px;">
     <div class="card">
@@ -16,20 +17,34 @@
         </div>
         <div class="card-actions" style="gap:10px;">
           <a class="card-btn" href="/" style="text-decoration:none;">Accueil</a>
-          <a class="card-btn active" href="/concessionnaires" style="text-decoration:none;">Concessionnaires</a>
+          <a class="card-btn" href="/concessionnaires" style="text-decoration:none;">Concessionnaires</a>
+          <a class="card-btn active" href="/admin" style="text-decoration:none;">Admin</a>
         </div>
       </div>
 
       <div class="card-content">
-        <h3>Authentification (Web)</h3>
+
+        <h3>0) Accès & rôles</h3>
+        <ul>
+          <li><b>admin</b> : accès total (admin + concessionnaires + documentation)</li>
+          <li><b>user</b> : accès concessionnaires uniquement si <code>is_approved = true</code></li>
+        </ul>
+
+        <h3 style="margin-top:18px;">Authentification (Web)</h3>
         <ul>
           <li><b>GET</b> <code>/login</code> : page de connexion</li>
-          <li><b>POST</b> <code>/login</code> : envoi email/password</li>
-          <li><b>GET</b> <code>/logout</code> : déconnexion</li>
+          <li><b>POST</b> <code>/login</code> : envoi email/password → création d’une session</li>
+          <li><b>GET</b> <code>/logout</code> : déconnexion (suppression session)</li>
+          <li><b>GET</b> <code>/register</code> : page création compte</li>
+          <li><b>POST</b> <code>/register</code> : création compte (statut “en attente”)</li>
         </ul>
 
         <h3 style="margin-top:18px;">1) Prédiction véhicule</h3>
         <div><b>POST</b> <code>/api/predict</code></div>
+        <div style="opacity:.85; margin:6px 0;">
+          Auth requise : <code>login_required</code> (session) + compte approuvé
+        </div>
+
         <div style="opacity:.8; margin:6px 0;">Body JSON (features clés)</div>
         <pre style="white-space:pre-wrap;">{
   "brand": "Peugeot",
@@ -38,16 +53,83 @@
   "gearbox": "manual",
   "year": 2019,
   "mileage_km": 82000,
+
   "doors": 5,
   "seats": 5,
   "power_hp": 100
 }</pre>
 
-        <div style="opacity:.8; margin:6px 0;">Réponse 200</div>
+        <div style="opacity:.8; margin:6px 0;">Réponse 200 (OK)</div>
         <pre style="white-space:pre-wrap;">{ "predicted_price_eur": 9450 }</pre>
 
+        <div style="opacity:.8; margin:6px 0;">Erreurs possibles</div>
+        <ul>
+          <li><code>401</code> : non connecté (pas de session)</li>
+          <li><code>403</code> : compte non approuvé (en attente validation admin)</li>
+          <li><code>422</code> : payload invalide / champs manquants</li>
+          <li><code>500</code> : erreur serveur (exception)</li>
+        </ul>
+
         <h3 style="margin-top:18px;">2) Analyse marché – série (évolution)</h3>
-        <div><b>GET</b> <code>/api/market/price-series?marque=Peugeot&annee=2019&carburant=diesel</code></div>
-        <div style="opacity:.8; margin:6px 0;">Réponse 200</div>
+        <div><b>GET</b> <code>/api/market/price-series?marque=Peugeot&amp;annee=2019&amp;carburant=diesel</code></div>
+        <div style="opacity:.85; margin:6px 0;">Auth requise : <code>login_required</code></div>
+
+        <div style="opacity:.8; margin:6px 0;">Paramètres requis</div>
+        <ul>
+          <li><code>marque</code> (string)</li>
+          <li><code>annee</code> (string/int)</li>
+          <li><code>carburant</code> (string)</li>
+        </ul>
+
+        <div style="opacity:.8; margin:6px 0;">Réponse 200 (OK)</div>
         <pre style="white-space:pre-wrap;">{
-  "filters": {"marque":"Peugeot","annee":"201
+  "filters": { "marque": "Peugeot", "annee": "2019", "carburant": "diesel" },
+  "x": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  "y": [12000, 11800, 12100, 12500, 12300, 12700]
+}</pre>
+
+        <div style="opacity:.8; margin:6px 0;">Erreurs possibles</div>
+        <ul>
+          <li><code>401</code> : non connecté</li>
+          <li><code>403</code> : compte non approuvé</li>
+          <li><code>422</code> : paramètres manquants</li>
+          <li><code>500</code> : erreur serveur</li>
+        </ul>
+
+        <h3 style="margin-top:18px;">3) Analyse marché – plus grande évolution annuelle</h3>
+        <div><b>GET</b> <code>/api/market/top-change?marque=Peugeot&amp;carburant=diesel</code></div>
+        <div style="opacity:.85; margin:6px 0;">Auth requise : <code>login_required</code></div>
+
+        <div style="opacity:.8; margin:6px 0;">Paramètres requis</div>
+        <ul>
+          <li><code>marque</code> (string)</li>
+          <li><code>carburant</code> (string)</li>
+        </ul>
+
+        <div style="opacity:.8; margin:6px 0;">Réponse 200 (OK)</div>
+        <pre style="white-space:pre-wrap;">{
+  "filters": { "marque": "Peugeot", "carburant": "diesel" },
+  "year": 2022,
+  "change_eur": 1800
+}</pre>
+
+        <div style="opacity:.8; margin:6px 0;">Erreurs possibles</div>
+        <ul>
+          <li><code>401</code> : non connecté</li>
+          <li><code>403</code> : compte non approuvé</li>
+          <li><code>422</code> : paramètres manquants</li>
+          <li><code>500</code> : erreur serveur</li>
+        </ul>
+
+        <h3 style="margin-top:18px;">Notes (projet)</h3>
+        <ul>
+          <li>Le nettoyage et la préparation des données sont réalisés en amont.</li>
+          <li>Les valeurs renvoyées ici peuvent être “mock” tant que le modèle final n’est pas branché.</li>
+          <li>Objectif : API REST claire + intégrable + documentée.</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
