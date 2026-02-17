@@ -16,8 +16,8 @@ Grid_pipe = {
 "model__min_samples_split": [2,5],
 "model__min_samples_leaf":[1,2]
 }
-path = r"Data\data_to_train.csv"
-model = RandomForestRegressor(random_state=40)
+path = ""
+model = ""
 
 
 
@@ -62,5 +62,7 @@ def pip_test(csv_path=path,model=model,grid=Grid_pipe,num=first_train_num,cat=fi
     
     return train.best_score_, train.best_params_, train.best_estimator_,r2,rmse
 
-score,params,estimator,r2,rmse = pip_test()
-print(r2)
+# score,params,estimator,r2,rmse = pip_test()
+# print(r2)
+
+
