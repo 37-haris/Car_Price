@@ -7,10 +7,12 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
 from starlette.middleware.base import BaseHTTPMiddleware
+import charts
 
 # App Setup
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="template/static"), name="static")
+app.include_router(charts.router, prefix="/charts", tags=["Charts"])
 templates = Jinja2Templates(directory="template")
 
 # Database

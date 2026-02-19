@@ -2218,3 +2218,29 @@ a {
 .login-card {
     animation: fadeInUp 0.6s ease-out;
 }
+
+
+.chart-bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 6px;
+}
+
+.chart-bar {
+    width: 25px;
+    height: 0; /* start from 0 for animation */
+    transition: height 1s ease-out;
+    border-radius: 4px 4px 0 0;
+}
+
+.bar-emerald { background-color: #34d399; }
+.bar-gold    { background-color: #facc15; }
+.bar-coral   { background-color: #f87171; }
+.bar-teal    { background-color: #14b8a6; }
+.bar-amber   { background-color: #f59e0b; }
+
+.chart-label {
+    margin-top: 5px;
+    font-size: 12px;
+}
