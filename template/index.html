@@ -12,6 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', path='templatemo-glass-admin-style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!--
 
 TemplateMo 607 Glass Admin
@@ -295,97 +296,37 @@ https://templatemo.com/tm-607-glass-admin
                 <div class="glass-card chart-card">
                     <div class="card-header">
                         <div>
-                            <h2 class="card-title">Revenue Analytics</h2>
-                            <p class="card-subtitle">Monthly revenue overview</p>
+                            <h2 class="card-title">Database Analytics</h2>
                         </div>
                         <div class="card-actions">
-                            <button class="card-btn active">Monthly</button>
-                            <button class="card-btn">Weekly</button>
-                            <button class="card-btn">Daily</button>
+                            <button class="card-btn active">Brand</button>
                         </div>
                     </div>
-                    
-                    <div class="glass-card chart-card">
-    <div class="card-header">
-        <h2 class="card-title">Models Per Year</h2>
-        <p class="card-subtitle">Number of distinct car models per year</p>
-    </div>
-    <div class="chart-wrapper">
-        <div class="chart-container">
-            <div class="chart-y-axis">
-                <span class="y-value">0</span>
-                <span class="y-value">5</span>
-                <span class="y-value">10</span>
-                <span class="y-value">15</span>
-                <span class="y-value">20</span>
-                <span class="y-value">25</span>
-            </div>
-            <div class="chart-placeholder" id="chart-placeholder">
-                <!-- Bars will be inserted dynamically -->
-            </div>
-        </div>
-    </div>
-</div>
 
 
+                    <div class="card-header">
+                        <h2 class="card-title">Brands Per Medel</h2>
+                        <p class="card-subtitle">Number of Model each brand appears</p>
+                    </div>
                     <div class="chart-wrapper">
                         <div class="chart-container">
-                            <div class="chart-y-axis">
-                                <span class="y-value">$100K</span>
-                                <span class="y-value">$80K</span>
-                                <span class="y-value">$60K</span>
-                                <span class="y-value">$40K</span>
-                                <span class="y-value">$20K</span>
-                                <span class="y-value">$0</span>
+                            <div class="chart-y-axis"></div>
+                            <div class="chart-placeholder" id="chart-placeholder">
+                                <!-- Animated bars inserted here -->
                             </div>
+                        </div>
+                    </div>
+                          
+                    <div class="card-header">
+                        <h2 class="card-title">Owners Per Price</h2>
+                        <p class="card-subtitle">Number of Owners each price range has</p>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-container">
+                            <div class="chart-y-axis" id="y-axis"></div>
                             <div class="chart-placeholder">
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-emerald" style="height: 120px;"></div><span
-                                        class="chart-label">Jan</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-gold" style="height: 160px;"></div><span
-                                        class="chart-label">Feb</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-coral" style="height: 90px;"></div><span
-                                        class="chart-label">Mar</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-teal" style="height: 140px;"></div><span
-                                        class="chart-label">Apr</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-amber" style="height: 180px;"></div><span
-                                        class="chart-label">May</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-emerald" style="height: 130px;"></div><span
-                                        class="chart-label">Jun</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-gold" style="height: 170px;"></div><span
-                                        class="chart-label">Jul</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-coral" style="height: 150px;"></div><span
-                                        class="chart-label">Aug</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-teal" style="height: 190px;"></div><span
-                                        class="chart-label">Sep</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-amber" style="height: 140px;"></div><span
-                                        class="chart-label">Oct</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-emerald" style="height: 175px;"></div><span
-                                        class="chart-label">Nov</span>
-                                </div>
-                                <div class="chart-bar-group">
-                                    <div class="chart-bar bar-gold" style="height: 200px;"></div><span
-                                        class="chart-label">Dec</span>
+                                <div class="chart-placeholder" id="owner-chart">
+                                    <!-- Dynamic bars will come here -->
                                 </div>
                             </div>
                         </div>
@@ -394,163 +335,34 @@ https://templatemo.com/tm-607-glass-admin
 
                 <!-- Activity Feed -->
                 <div class="glass-card activity-card">
-                    <div class="card-header">
-                        <div>
-                            <h2 class="card-title">Recent Activity</h2>
-                            <p class="card-subtitle">Latest transactions</p>
-                        </div>
-                    </div>
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-avatar"
-                                style="background: linear-gradient(135deg, var(--emerald-light), var(--emerald));">JD
-                            </div>
-                            <div class="activity-content">
-                                <p class="activity-text"><strong>John Doe</strong> purchased Premium Plan</p>
-                                <span class="activity-time">2 minutes ago</span>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-avatar"
-                                style="background: linear-gradient(135deg, var(--gold), var(--amber));">AS</div>
-                            <div class="activity-content">
-                                <p class="activity-text"><strong>Anna Smith</strong> submitted a support ticket</p>
-                                <span class="activity-time">15 minutes ago</span>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-avatar"
-                                style="background: linear-gradient(135deg, var(--coral), var(--gold));">MJ</div>
-                            <div class="activity-content">
-                                <p class="activity-text"><strong>Mike Johnson</strong> upgraded subscription</p>
-                                <span class="activity-time">1 hour ago</span>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-avatar"
-                                style="background: linear-gradient(135deg, var(--success), var(--emerald));">EW</div>
-                            <div class="activity-content">
-                                <p class="activity-text"><strong>Emily White</strong> completed onboarding</p>
-                                <span class="activity-time">2 hours ago</span>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-avatar"
-                                style="background: linear-gradient(135deg, var(--warning), var(--gold));">RB</div>
-                            <div class="activity-content">
-                                <p class="activity-text"><strong>Robert Brown</strong> requested refund</p>
-                                <span class="activity-time">3 hours ago</span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="card-header">
+        <h2 class="card-title">🎲 Car of the Day</h2>
+    </div>
+    <div id="random-car" class="random-car-container">
+        <div class="car-avatar" id="car-initials">--</div>
+        <div class="car-details">
+            <h3 id="car-name">Loading...</h3>
+            <div class="car-info-row"><span>📍</span><span id="car-location">-</span></div>
+            <div class="car-info-row"><span>📅</span><span id="car-year">-</span></div>
+            <div class="car-info-row"><span>⛽</span><span id="car-fuel">-</span></div>
+            <div class="car-info-row"><span>⚙️</span><span id="car-transmission">-</span></div>
+            <div class="car-info-row"><span>🛣️</span><span id="car-km">-</span></div>
+            <div class="car-info-row"><span>👤</span><span id="car-owner">-</span></div>
+            <div class="car-price" id="car-price">₹ -</div>
+        </div>
+</div>
                 </div>
 
                 <!-- Data Table -->
                 <div class="glass-card table-card">
                     <div class="card-header">
                         <div>
-                            <h2 class="card-title">Recent Transactions</h2>
-                            <p class="card-subtitle">Latest orders and payments</p>
-                        </div>
-                        <div class="card-actions">
-                            <button class="card-btn">View All</button>
-                            <button class="card-btn">Export</button>
+                            <h2 class="card-title">biggest Evolution Chart</h2>
+                            <p class="card-subtitle">Cars Evaluations</p>
                         </div>
                     </div>
                     <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Customer</th>
-                                    <th>Product</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"
-                                                style="background: linear-gradient(135deg, var(--emerald-light), var(--emerald));">
-                                                JD</div>
-                                            <div class="table-user-info"><span class="table-user-name">John
-                                                    Doe</span><span class="table-user-email">john@example.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Premium Plan</td>
-                                    <td>Jan 15, 2025</td>
-                                    <td><span class="status-badge completed">Completed</span></td>
-                                    <td><span class="table-amount">$299.00</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"
-                                                style="background: linear-gradient(135deg, var(--gold), var(--amber));">
-                                                AS</div>
-                                            <div class="table-user-info"><span class="table-user-name">Anna
-                                                    Smith</span><span class="table-user-email">anna@example.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Enterprise License</td>
-                                    <td>Jan 14, 2025</td>
-                                    <td><span class="status-badge processing">Processing</span></td>
-                                    <td><span class="table-amount">$1,499.00</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"
-                                                style="background: linear-gradient(135deg, var(--success), var(--emerald));">
-                                                MJ</div>
-                                            <div class="table-user-info"><span class="table-user-name">Mike
-                                                    Johnson</span><span class="table-user-email">mike@example.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Team Bundle</td>
-                                    <td>Jan 13, 2025</td>
-                                    <td><span class="status-badge completed">Completed</span></td>
-                                    <td><span class="table-amount">$599.00</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"
-                                                style="background: linear-gradient(135deg, var(--coral), var(--gold));">
-                                                EW</div>
-                                            <div class="table-user-info"><span class="table-user-name">Emily
-                                                    White</span><span class="table-user-email">emily@example.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Starter Plan</td>
-                                    <td>Jan 12, 2025</td>
-                                    <td><span class="status-badge pending">Pending</span></td>
-                                    <td><span class="table-amount">$49.00</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"
-                                                style="background: linear-gradient(135deg, var(--emerald), var(--gold));">
-                                                RB</div>
-                                            <div class="table-user-info"><span class="table-user-name">Robert
-                                                    Brown</span><span class="table-user-email">robert@example.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Pro Annual</td>
-                                    <td>Jan 11, 2025</td>
-                                    <td><span class="status-badge completed">Completed</span></td>
-                                    <td><span class="table-amount">$199.00</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                       <canvas id="biggestEvolutionChart"></canvas>
                     </div>
                 </div>
             </section>

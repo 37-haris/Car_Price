@@ -490,58 +490,297 @@
 
 
     // ============================================
-    // Fetch Model Per Year Data and Render Chart
+    // Fetch Model Per Models Data and Render Chart
     // ============================================
+// ========================
+// Color Per Bar (Dynamic)
+// ========================
+const colorPalette = [
+    "#4BC0C0", "#FF6384", "#36A2EB", "#FFCE56", "#9966FF",
+    "#FF9F40", "#E74C3C", "#3498DB", "#2ECC71", "#F39C12",
+    "#A29BFE", "#FD79A8", "#55EFC4", "#FDCB6E", "#E17055",
+    "#74B9FF", "#00CEC9", "#6C5CE7", "#FAB1A0", "#81ECEC",
+    "#D63031", "#0984E3", "#00B894", "#E84393", "#FDCB6E",
+    "#B2BEC3", "#636E72", "#2D3436", "#DFE6E9", "#F8EDEB"
+];
 
-    function renderBrandsPerYearChart() {
-    fetch('http://127.0.0.1:8000/charts/brands-per-year') // must match FastAPI endpoint
+function getColor(index) {
+    return colorPalette[index % colorPalette.length];
+}
+
+// ========================
+// Dynamic Y Axis
+// ========================
+function renderYAxis(maxCount, steps = 5) {
+    const yAxis = document.querySelector('.chart-y-axis');
+    if (!yAxis) return;
+
+    yAxis.innerHTML = '';
+
+    for (let i = steps; i >= 0; i--) {
+        const value = Math.round((i / steps) * maxCount);
+        const span = document.createElement('span');
+        span.classList.add('y-value');
+        span.textContent = value;
+        yAxis.appendChild(span);
+    }
+}
+
+// ========================
+// Brands Per Model Chart
+// ========================
+function renderBrandsPerModelChart() {
+    fetch('http://127.0.0.1:8000/charts/brands-per-model')
         .then(res => res.json())
         .then(data => {
             const container = document.getElementById('chart-placeholder');
             container.innerHTML = '';
 
-            // Group brands by year
-            const grouped = {};
-            data.forEach(item => {
-                if (!grouped[item.year]) grouped[item.year] = new Set();
-                grouped[item.year].add(item.brand);
+            const maxCount = Math.max(...data.map(d => d.count)) || 1;
+
+            renderYAxis(maxCount);
+
+            data.forEach((item, index) => {
+                const barGroup = document.createElement('div');
+                barGroup.classList.add('chart-bar-group');
+
+                const bar = document.createElement('div');
+                bar.classList.add('chart-bar');
+
+                const height = Math.round((item.count / maxCount) * 200);
+                bar.style.height = '0px';
+                // bar.style.backgroundColor = getColor(index); // ✅ unique color per bar
+                bar.title = `${item.brand} - ${item.model}: ${item.count} cars`;
+
+                barGroup.appendChild(bar);
+
+                setTimeout(() => { bar.style.height = height + 'px'; }, 50);
+
+                const label = document.createElement('span');
+                label.classList.add('chart-label');
+                label.textContent = item.model;
+                barGroup.appendChild(label);
+
+                container.appendChild(barGroup);
             });
+        })
+        .catch(err => console.error('Error loading brands per model:', err));
+}
 
-            const years = Object.keys(grouped).sort();
-            const colors = ['bar-emerald', 'bar-gold', 'bar-coral', 'bar-teal', 'bar-amber'];
-            const maxCount = Math.max(...years.map(y => grouped[y].size)) || 1;
 
-            years.forEach((year, index) => {
+// ========================
+// Owner type Per Price Chart
+// ========================
+
+function renderOwnerTypeChart() {
+    fetch('http://127.0.0.1:8000/charts/owner-type-price')
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('owner-chart');
+            const yAxis = document.getElementById('y-axis');
+
+            container.innerHTML = '';
+            yAxis.innerHTML = '';
+
+            if (!data || data.length === 0) return;
+
+            const colors = ['bar-emerald','bar-gold','bar-coral','bar-teal','bar-amber'];
+
+            // ✅ Get max price
+            const maxPrice = Math.max(...data.map(d => d.avg_price)) || 1;
+
+            // ✅ Create Y-axis dynamically (5 steps)
+            const steps = 5;
+            for (let i = steps; i >= 0; i--) {
+                const value = Math.round((maxPrice / steps) * i);
+
+                const label = document.createElement('span');
+                label.classList.add('y-value');
+
+                // format (100000 -> 100K)
+                label.textContent = value >= 1000 
+                    ? (value / 1000).toFixed(0) + 'K'
+                    : value;
+
+                yAxis.appendChild(label);
+            }
+
+            // ✅ Create bars
+            data.forEach((item, index) => {
                 const barGroup = document.createElement('div');
                 barGroup.classList.add('chart-bar-group');
 
                 const bar = document.createElement('div');
                 bar.classList.add('chart-bar', colors[index % colors.length]);
 
-                const height = Math.round((grouped[year].size / maxCount) * 200);
+                const height = Math.round((item.avg_price / maxPrice) * 200);
+                bar.style.height = '0px';
 
-                // Tooltip shows brands
-                bar.title = Array.from(grouped[year]).join(', ');
+                // Tooltip
+                bar.title = `Owner: ${item.owner_type}
+Avg: ${item.avg_price}
+Min: ${item.min_price}
+Max: ${item.max_price}`;
 
-                barGroup.appendChild(bar);
-
+                // Label
                 const label = document.createElement('span');
                 label.classList.add('chart-label');
-                label.textContent = year;
-                barGroup.appendChild(label);
+                label.textContent = item.owner_type;
 
+                barGroup.appendChild(bar);
+                barGroup.appendChild(label);
                 container.appendChild(barGroup);
 
-                // Animate height
+                // Animate
                 setTimeout(() => {
                     bar.style.height = height + 'px';
-                }, 50);
+                }, 100);
             });
         })
-        .catch(err => console.error('Error loading brands per year:', err));
+        .catch(err => console.error('Error:', err));
 }
 
-window.addEventListener('DOMContentLoaded', renderBrandsPerYearChart);
+window.addEventListener('DOMContentLoaded', renderOwnerTypeChart);
+
+
+// ========================
+// Random Car of the Day
+// ========================
+function loadRandomCar() {
+    fetch('http://127.0.0.1:8000/charts/random-car')
+        .then(res => res.json())
+        .then(data => {
+            const words = data.name.trim().split(' ');
+            const initials = words.length >= 2
+                ? words[0][0] + words[1][0]
+                : words[0][0];
+
+            document.getElementById('car-initials').textContent = initials.toUpperCase();
+            document.getElementById('car-name').textContent = data.name;
+            document.getElementById('car-location').textContent = data.location;
+            document.getElementById('car-year').textContent = data.year;
+            document.getElementById('car-fuel').textContent = data.fuel;
+            document.getElementById('car-transmission').textContent = data.transmission;
+            document.getElementById('car-km').textContent = data.km.toLocaleString() + ' km';
+            document.getElementById('car-owner').textContent = data.owner;
+            document.getElementById('car-price').textContent = '₹ ' + data.price + ' Lakhs';
+        })
+        .catch(err => console.error('Error loading random car:', err));
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadRandomCar();
+    setInterval(loadRandomCar, 5000); // ✅ updates every 5 seconds
+});
+
+
+
+// ========================
+// Color Palette
+// ========================
+const colorPalettes = [
+    "#4BC0C0", "#FF6384", "#36A2EB", "#FFCE56", "#9966FF",
+    "#FF9F40", "#E74C3C", "#3498DB", "#2ECC71", "#F39C12"
+];
+
+// ========================
+// Biggest Price Evolution per Year (Animated)
+// ========================
+function renderBiggestEvolutionChart() {
+    fetch('http://127.0.0.1:8000/charts/biggest-price-evolution')
+        .then(res => res.json())
+        .then(data => {
+            const canvas = document.getElementById('biggestEvolutionChart');
+            if (!canvas) return;
+
+            const allYears = [...new Set(
+                data.flatMap(d => d.data.map(p => p.year))
+            )].sort();
+
+            const datasets = data.map((series, index) => ({
+                label: series.label,
+                data: allYears.map(year => {
+                    const point = series.data.find(p => p.year === year);
+                    return point ? point.avg_price : null;
+                }),
+                borderColor: colorPalettes[index % colorPalettes.length],
+                backgroundColor: colorPalettes[index % colorPalettes.length] + '22',
+                borderWidth: 2.5,
+                tension: 0.4,
+                spanGaps: true,
+                pointRadius: 4,
+                pointHoverRadius: 7,
+                pointBackgroundColor: colorPalettes[index % colorPalettes.length],
+                fill: false,
+            }));
+
+            new Chart(canvas, {
+                type: 'line',
+                data: { labels: allYears, datasets },
+                options: {
+                    responsive: true,
+                    animation: {
+                        duration: 2000,           // 2 second animation
+                        easing: 'easeInOutQuart', // smooth easing
+                        onProgress: function(animation) {
+                            // draws a progress bar while animating
+                            const ctx = canvas.getContext('2d');
+                            const chart = animation.chart;
+                            const progress = animation.currentStep / animation.numSteps;
+                            ctx.save();
+                            ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                            ctx.fillRect(0, chart.height - 4, chart.width * progress, 4);
+                            ctx.restore();
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff',
+                                padding: 15,
+                                font: { size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            titleColor: '#fff',
+                            bodyColor: '#ccc',
+                            callbacks: {
+                                afterBody: (items) => {
+                                    const d = data[items[0]?.datasetIndex];
+                                    if (d) return `📈 Biggest jump: ₹${d.evolution}L in ${d.year}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Year', color: '#aaa' },
+                            ticks: { color: '#aaa' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Avg Price (Lakhs)', color: '#aaa' },
+                            ticks: { color: '#aaa' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(err => console.error('Error loading biggest evolution chart:', err));
+}
+window.addEventListener('DOMContentLoaded', () => {
+    renderBiggestEvolutionChart();
+});
 
 
 
@@ -561,7 +800,10 @@ window.addEventListener('DOMContentLoaded', renderBrandsPerYearChart);
         fetchFuelTypeCount();
         fetchBrandCount();
         fetchModelCount();
-        renderBrandsPerYearChart();
+        renderBrandsPerModelChart();
+        renderOwnerTypeChart();
+        loadRandomCar();
+        renderBiggestEvolutionChart();
     }
 
     // Run on DOM ready

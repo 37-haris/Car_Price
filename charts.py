@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 import chart_query as chart_queries
 from database import get_db
-from chart_query import brands_per_year
+from chart_query import brands_per_model, owner_type_price, random_car, biggest_price_evolution
 
 router = APIRouter()
 
@@ -27,6 +27,22 @@ def get_count_models(db: Session = Depends(get_db)):
 # def get_models_per_year(db: Session = Depends(get_db)):
 #     return models_per_year(db)
 
-@router.get("/brands-per-year")
-def get_brands_per_year(db: Session = Depends(get_db)):
-    return brands_per_year(db)
+# @router.get("/brands-per-year")
+# def get_brands_with_years(db: Session = Depends(get_db)):
+#     return brands_per_year(db)
+
+@router.get("/brands-per-model")
+def get_brands_per_model(db: Session = Depends(get_db)):
+    return brands_per_model(db)
+
+@router.get("/owner-type-price")
+def get_owner_types(db: Session = Depends(get_db)):
+    return owner_type_price(db)
+
+@router.get("/random-car")
+def get_random_car(db: Session = Depends(get_db)):
+    return random_car(db)
+
+@router.get("/biggest-price-evolution")
+def get_biggest_price_evolution(db: Session = Depends(get_db)):
+    return biggest_price_evolution(db)

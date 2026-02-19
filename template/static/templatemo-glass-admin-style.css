@@ -2219,6 +2219,18 @@ a {
     animation: fadeInUp 0.6s ease-out;
 }
 
+.chart-bar {
+    width: 50px;
+    height: 0;
+    transition: height 1s ease-out;
+    border-radius: 6px 6px 0 0;
+}
+
+.bar-emerald { background: #34d399; }
+.bar-gold    { background: #facc15; }
+.bar-coral   { background: #f87171; }
+.bar-teal    { background: #14b8a6; }
+.bar-amber   { background: #f59e0b; }
 
 .chart-bar-group {
     display: flex;
@@ -2227,20 +2239,76 @@ a {
     margin: 0 6px;
 }
 
-.chart-bar {
-    width: 25px;
-    height: 0; /* start from 0 for animation */
-    transition: height 1s ease-out;
-    border-radius: 4px 4px 0 0;
+.chart-label {
+    margin-top: 6px;
+    font-size: 12px;
 }
 
-.bar-emerald { background-color: #34d399; }
-.bar-gold    { background-color: #facc15; }
-.bar-coral   { background-color: #f87171; }
-.bar-teal    { background-color: #14b8a6; }
-.bar-amber   { background-color: #f59e0b; }
+.chart-card {
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* auto spacing between all children */
+}
 
-.chart-label {
-    margin-top: 5px;
-    font-size: 12px;
+.random-car-container {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 10px 0;
+}
+
+.car-avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6C5CE7, #a29bfe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.car-details {
+    flex: 1;
+}
+
+.car-details h3 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.car-info-row {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 4px;
+    opacity: 0.85;
+}
+
+.car-price {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #2ECC71;
+}
+
+.btn-refresh {
+    margin-top: 12px;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.3s;
+}
+
+.btn-refresh:hover {
+    background: rgba(255,255,255,0.2);
 }
