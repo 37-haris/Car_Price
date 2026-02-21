@@ -1,16 +1,28 @@
 from fastapi import FastAPI, Request, Form, Depends, HTTPException
+from contextlib import asynccontextmanager
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
 from starlette.middleware.base import BaseHTTPMiddleware
 import charts
+import joblib as jbl
+import pandas as pd
 
 # App Setup
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.ml_models = jbl.load("model.pkl")
+    print("Model loaded successfully")
+    yield
+    app.state.ml_models = None
+    print("Model unloaded successfully")
+app = FastAPI(lifespan=lifespan)
+
 app.mount("/static", StaticFiles(directory="template/static"), name="static")
 app.include_router(charts.router, prefix="/charts", tags=["Charts"])
 templates = Jinja2Templates(directory="template")
@@ -20,6 +32,25 @@ DATABASE_URL = "mysql+pymysql://root:@localhost/car"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
+
+num= ['Year', 'Kilometers_Driven', 'Consommation', 'Engine']
+cat = ['Location', 'Fuel_Type', 'Transmission', 'Owner_Type', 'Brand',
+       'Model']
+
+class Body(BaseModel):
+    Fuel_Type: str
+    Transmission: str
+    Owner_Type: str
+    Location: str
+    Brand: str
+    Model: str
+    Year: int
+    Kilometers_Driven: float
+    Engine: float
+    Consommation: float
+    
+    
+
 
 class User(Base):
     __tablename__ = "users"
@@ -85,6 +116,24 @@ def home(request: Request):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+@app.post("/predict")
+async def predict(body: Body):
+    print(body)
+    df = pd.DataFrame([{
+        "Brand": body.Brand,
+        "Model": body.Model,
+        "Fuel_Type": body.Fuel_Type,
+        "Transmission": body.Transmission,
+        "Year": body.Year,
+        "Kilometers_Driven": body.Kilometers_Driven,
+        "Engine": body.Engine,
+        "Consommation": body.Consommation,
+        "Location": body.Location,
+        "Owner_Type": body.Owner_Type
+    }])
+    result = app.state.ml_models.predict(df)[0]
+    return {"result": float(result)}
 
 @app.get("/prediction", response_class=HTMLResponse)
 def prediction_page(request: Request):

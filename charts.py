@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 import chart_query as chart_queries
 from database import get_db
-from chart_query import brands_per_model, owner_type_price, random_car, biggest_price_evolution
+from chart_query import transmission_distribution, brands_per_model, owner_type_price, random_car, biggest_price_evolution, price_evolution, get_location_insights
 
 router = APIRouter()
 
@@ -46,3 +46,15 @@ def get_random_car(db: Session = Depends(get_db)):
 @router.get("/biggest-price-evolution")
 def get_biggest_price_evolution(db: Session = Depends(get_db)):
     return biggest_price_evolution(db)
+
+@router.get("/price-evolution")
+def get_price_evolution(db: Session = Depends(get_db)):
+    return price_evolution(db)
+
+@router.get("/transmission")
+def get_transmission_distribution(db: Session = Depends(get_db)):
+    return transmission_distribution(db)
+
+@router.get("/location-insights")
+def location_insights(db: Session = Depends(get_db)):
+    return get_location_insights(db)

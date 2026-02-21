@@ -305,7 +305,7 @@ https://templatemo.com/tm-607-glass-admin
 
 
                     <div class="card-header">
-                        <h2 class="card-title">Brands Per Medel</h2>
+                        <h2 class="card-title">Quantity of Top 30 Models</h2>
                         <p class="card-subtitle">Number of Model each brand appears</p>
                     </div>
                     <div class="chart-wrapper">
@@ -316,9 +316,9 @@ https://templatemo.com/tm-607-glass-admin
                             </div>
                         </div>
                     </div>
-                          
+
                     <div class="card-header">
-                        <h2 class="card-title">Owners Per Price</h2>
+                        <h2 class="card-title">Owners/Cost</h2>
                         <p class="card-subtitle">Number of Owners each price range has</p>
                     </div>
                     <div class="chart-wrapper">
@@ -335,34 +335,43 @@ https://templatemo.com/tm-607-glass-admin
 
                 <!-- Activity Feed -->
                 <div class="glass-card activity-card">
-    <div class="card-header">
-        <h2 class="card-title">🎲 Car of the Day</h2>
-    </div>
-    <div id="random-car" class="random-car-container">
-        <div class="car-avatar" id="car-initials">--</div>
-        <div class="car-details">
-            <h3 id="car-name">Loading...</h3>
-            <div class="car-info-row"><span>📍</span><span id="car-location">-</span></div>
-            <div class="car-info-row"><span>📅</span><span id="car-year">-</span></div>
-            <div class="car-info-row"><span>⛽</span><span id="car-fuel">-</span></div>
-            <div class="car-info-row"><span>⚙️</span><span id="car-transmission">-</span></div>
-            <div class="car-info-row"><span>🛣️</span><span id="car-km">-</span></div>
-            <div class="car-info-row"><span>👤</span><span id="car-owner">-</span></div>
-            <div class="car-price" id="car-price">₹ -</div>
-        </div>
-</div>
+                    <div class="card-header">
+                        <h2 class="card-title">🎲 Existing Cars</h2>
+                    </div>
+                    <div id="random-car" class="random-car-container">
+                        <div class="car-avatar" id="car-initials">--</div>
+                        <div class="car-details">
+                            <h3 id="car-name">Loading...</h3>
+                            <div class="car-info-row"><span>📍</span><span id="car-location">-</span></div>
+                            <div class="car-info-row"><span>📅</span><span id="car-year">-</span></div>
+                            <div class="car-info-row"><span>⛽</span><span id="car-fuel">-</span></div>
+                            <div class="car-info-row"><span>⚙️</span><span id="car-transmission">-</span></div>
+                            <div class="car-info-row"><span>🛣️</span><span id="car-km">-</span></div>
+                            <div class="car-info-row"><span>👤</span><span id="car-owner">-</span></div>
+                            <div class="car-price" id="car-price">₹ -</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Data Table -->
                 <div class="glass-card table-card">
                     <div class="card-header">
                         <div>
-                            <h2 class="card-title">biggest Evolution Chart</h2>
-                            <p class="card-subtitle">Cars Evaluations</p>
+                            <h2 class="card-title">Biggest Evolution Chart</h2>
+                            <p class="card-subtitle">Cars' Price Evaluations</p>
                         </div>
                     </div>
                     <div class="table-wrapper">
-                       <canvas id="biggestEvolutionChart"></canvas>
+                        <canvas id="biggestEvolutionChart"></canvas>
+                    </div>
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Evolution Chart Each Year</h2>
+                            <p class="card-subtitle">Cars' Price Evaluations</p>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <canvas id="priceEvolutionChart"></canvas>
                     </div>
                 </div>
             </section>
@@ -417,73 +426,25 @@ https://templatemo.com/tm-607-glass-admin
                 <div class="glass-card">
                     <div class="card-header">
                         <div>
-                            <h2 class="card-title">Traffic Sources</h2>
-                            <p class="card-subtitle">User acquisition breakdown</p>
+                            <h2 class="card-title">Transmission</h2>
+                            <p class="card-subtitle">Types</p>
                         </div>
                     </div>
                     <div class="donut-container">
-                        <div class="donut-chart">
-                            <svg width="140" height="140" viewBox="0 0 140 140">
-                                <circle class="donut-bg" cx="70" cy="70" r="54" />
-                                <circle class="donut-segment" cx="70" cy="70" r="54" stroke="var(--emerald-light)"
-                                    stroke-dasharray="169.6 339.3" stroke-dashoffset="0" />
-                                <circle class="donut-segment" cx="70" cy="70" r="54" stroke="var(--gold)"
-                                    stroke-dasharray="101.8 339.3" stroke-dashoffset="-169.6" />
-                                <circle class="donut-segment" cx="70" cy="70" r="54" stroke="var(--coral)"
-                                    stroke-dasharray="67.9 339.3" stroke-dashoffset="-271.4" />
-                            </svg>
-                            <div class="donut-center">
-                                <div class="donut-value">24.5K</div>
-                                <div class="donut-label">Visitors</div>
-                            </div>
-                        </div>
-                        <div class="donut-legend">
-                            <div class="legend-item"><span class="legend-color cyan"></span><span>Organic Search
-                                    (50%)</span></div>
-                            <div class="legend-item"><span class="legend-color magenta"></span><span>Social Media
-                                    (30%)</span></div>
-                            <div class="legend-item"><span class="legend-color purple"></span><span>Direct Traffic
-                                    (20%)</span></div>
-                        </div>
+                        <canvas id="transmissionChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Progress Card -->
                 <div class="glass-card progress-card">
                     <div class="card-header">
-                        <div>
-                            <h2 class="card-title">Project Progress</h2>
-                            <p class="card-subtitle">Current sprint status</p>
-                        </div>
+                        <h2>📍 Location</h2>
                     </div>
-                    <div class="progress-item">
-                        <div class="progress-header"><span class="progress-label">UI Design</span><span
-                                class="progress-value">85%</span></div>
-                        <div class="progress-bar">
-                            <div class="progress-fill cyan" style="width: 85%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-header"><span class="progress-label">Backend API</span><span
-                                class="progress-value">62%</span></div>
-                        <div class="progress-bar">
-                            <div class="progress-fill magenta" style="width: 62%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-header"><span class="progress-label">Testing</span><span
-                                class="progress-value">45%</span></div>
-                        <div class="progress-bar">
-                            <div class="progress-fill purple" style="width: 45%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-header"><span class="progress-label">Documentation</span><span
-                                class="progress-value">28%</span></div>
-                        <div class="progress-bar">
-                            <div class="progress-fill cyan" style="width: 28%;"></div>
-                        </div>
-                    </div>
+
+                    <p><b>Top City 🌆:</b> <span id="top-city">Loading...</span></p>
+                    <p><b>Cheapest City 🏙️:</b> <span id="cheap-city">Loading...</span></p>
+
+                    <canvas id="locationChart" height="120"></canvas>
                 </div>
             </section>
         </main>
@@ -500,8 +461,7 @@ https://templatemo.com/tm-607-glass-admin
 
     <!-- Footer -->
     <footer class="site-footer">
-        <p>Copyright © 2026 Your Company. Designed by <a href="https://templatemo.com" target="_blank"
-                rel="nofollow">TemplateMo</a></p>
+        <p>Developed By Our <a href="https://templatemo.com" target="_blank" rel="nofollow">Team</a></p>
     </footer>
 
     <script src="{{ url_for('static', path='templatemo-glass-admin-script.js') }}"></script>

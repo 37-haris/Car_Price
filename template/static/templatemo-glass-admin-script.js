@@ -784,6 +784,237 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
+// ========================
+// Color Palette
+// ========================
+const colorPalettee = [
+    "#4BC0C0", "#FF6384", "#36A2EB", "#FFCE56", "#9966FF",
+    "#FF9F40", "#E74C3C", "#3498DB", "#2ECC71", "#F39C12"
+];
+
+// ========================
+// Price Evolution by Brand & Fuel Type
+// ========================
+function renderPriceEvolutionChart() {
+    fetch('http://127.0.0.1:8000/charts/price-evolution')
+        .then(res => res.json())
+        .then(data => {
+            const canvas = document.getElementById('priceEvolutionChart');
+            if (!canvas) return;
+
+            // Limit to top 10 to avoid overcrowding
+            const limited = data.slice(0, 10);
+
+            // Collect all unique years for X axis
+            const allYears = [...new Set(
+                limited.flatMap(d => d.data.map(p => p.year))
+            )].sort();
+
+            const datasets = limited.map((series, index) => ({
+                label: series.label,
+                data: allYears.map(year => {
+                    const point = series.data.find(p => p.year === year);
+                    return point ? point.avg_price : null;
+                }),
+                borderColor: colorPalettee[index % colorPalettee.length],
+                backgroundColor: colorPalettee[index % colorPalettee.length] + '22',
+                borderWidth: 2.5,
+                tension: 0.4,
+                spanGaps: true,
+                pointRadius: 4,
+                pointHoverRadius: 7,
+                pointBackgroundColor: colorPalettee[index % colorPalettee.length],
+                fill: false,
+            }));
+
+            new Chart(canvas, {
+                type: 'line',
+                data: { labels: allYears, datasets },
+                options: {
+                    responsive: true,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart',
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff',
+                                padding: 15,
+                                font: { size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            titleColor: '#fff',
+                            bodyColor: '#ccc',
+                            callbacks: {
+                                label: (item) => {
+                                    return ` ${item.dataset.label}: ₹${item.raw}L`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Year', color: '#aaa' },
+                            ticks: { color: '#aaa' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Avg Price (Lakhs)', color: '#aaa' },
+                            ticks: {
+                                color: '#aaa',
+                                callback: (value) => '₹' + value + 'L'
+                            },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(err => console.error('Error loading price evolution chart:', err));
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    renderPriceEvolutionChart();
+});
+
+
+
+// ========================
+// Transmission Distribution Donut Chart
+// ========================
+function renderTransmissionChart() {
+    fetch('http://127.0.0.1:8000/charts/transmission')
+        .then(res => res.json())
+        .then(data => {
+            const canvas = document.getElementById('transmissionChart');
+            if (!canvas) return;
+
+            const labels = data.map(d => `${d.label} (${d.percent}%)`);
+            const values = data.map(d => d.count);
+            const total  = values.reduce((a, b) => a + b, 0);
+
+            const colors = ['#36A2EB', '#FF6384'];
+
+            new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderColor: 'transparent',
+                        borderWidth: 0,
+                        hoverOffset: 12,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '72%',
+                    animation: {
+                        animateRotate: true,
+                        duration: 2000,
+                        easing: 'easeoutBounce',
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                color: '#fff',
+                                padding: 15,
+                                font: { size: 12 },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            titleColor: '#fff',
+                            bodyColor: '#ccc',
+                            callbacks: {
+                                label: (item) => ` ${item.label}: ${item.raw.toLocaleString()} cars`
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    // ✅ Center text showing total cars
+                    id: 'centerText',
+                    afterDraw(chart) {
+                        const { ctx, chartArea: { top, bottom, left, right } } = chart;
+                        const centerX = (left + right) / 2;
+                        const centerY = (top + bottom) / 2;
+
+                        ctx.save();
+
+                        // Total number
+                        ctx.font = 'bold 22px Outfit';
+                        ctx.fillStyle = '#ffffff';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        const displayTotal = total >= 1000
+                            ? (total / 1000).toFixed(1) + 'K'
+                            : total;
+                        ctx.fillText(displayTotal, centerX, centerY - 10);
+
+                        // Label below
+                        ctx.font = '13px Outfit';
+                        ctx.fillStyle = '#aaaaaa';
+                        ctx.fillText('Total Cars', centerX, centerY + 14);
+
+                        ctx.restore();
+                    }
+                }]
+            });
+        })
+        .catch(err => console.error('Error loading transmission chart:', err));
+}
+window.addEventListener('DOMContentLoaded', () => {
+    renderTransmissionChart();
+});
+
+// ========================
+// Location Chart
+// ========================
+
+function loadLocationInsights() {
+    fetch('http://127.0.0.1:8000/charts/location-insights')
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+
+            // Top & cheapest
+            document.getElementById('top-city').textContent =
+                `${data.top_city.Location} (${data.top_city.total_cars} cars)`;
+
+            document.getElementById('cheap-city').textContent =
+                `${data.cheapest_city.Location} (₹ ${Math.round(data.cheapest_city.avg_price)}L avg)`;
+
+            // Prepare chart data
+            const labels = data.cities.map(c => c.Location);
+            const prices = data.cities.map(c => c.avg_price);
+
+            renderLocationChart(labels, prices);
+        })
+        .catch(err => console.error(err));
+}
+window.addEventListener('DOMContentLoaded', () => {
+    loadLocationInsights();
+});
+
+
+
     // ============================================
     // Initialize All Functions
     // ============================================
@@ -804,6 +1035,9 @@ window.addEventListener('DOMContentLoaded', () => {
         renderOwnerTypeChart();
         loadRandomCar();
         renderBiggestEvolutionChart();
+        renderPriceEvolutionChart();
+        renderTransmissionChart();
+        loadLocationInsights();
     }
 
     // Run on DOM ready

@@ -147,8 +147,67 @@ def biggest_price_evolution(db: Session):
     evolutions.sort(key=lambda x: abs(x["evolution"]), reverse=True)
     return evolutions[:10]
 
+def price_evolution(db: Session):
+    query = text("""
+        SELECT 
+            SUBSTRING_INDEX(Name, ' ', 1) AS brand,
+            Year,
+            Fuel_Type,
+            ROUND(AVG(Price), 2) as avg_price
+        FROM info
+        WHERE Price IS NOT NULL AND Name IS NOT NULL
+        GROUP BY brand, Year, Fuel_Type
+        ORDER BY Year
+    """)
+    result = db.execute(query).fetchall()
+    grouped = {}
+    for row in result:
+        key = f"{row.brand} - {row.Fuel_Type}"
+        if key not in grouped:
+            grouped[key] = []
+        grouped[key].append({"year": row.Year, "avg_price": row.avg_price})
+    return [{"label": k, "data": v} for k, v in grouped.items()]
 
 
+def transmission_distribution(db: Session):
+    query = text("""
+        SELECT Transmission, COUNT(*) as count
+        FROM info
+        WHERE Transmission IS NOT NULL
+        GROUP BY Transmission
+    """)
+    result = db.execute(query).fetchall()
+    total = sum(row.count for row in result)
+    return [{"label": row.Transmission, "count": row.count, 
+             "percent": round((row.count / total) * 100, 1)} for row in result]
+    
+def get_location_insights(db):
+    query = text("""
+        SELECT 
+            Location,
+            COUNT(*) as total_cars,
+            AVG(Price) as avg_price
+        FROM info
+        WHERE Price IS NOT NULL AND Location IS NOT NULL
+        GROUP BY Location
+    """)
+
+    results = db.execute(query).fetchall()
+
+    # Convert to list of dicts
+    data = [dict(row._mapping) for row in results]
+
+    # 🔥 Compute insights
+    top_city = max(data, key=lambda x: x['total_cars'])
+    cheapest_city = min(data, key=lambda x: x['avg_price'])
+
+    return {
+        "cities": data,
+        "top_city": top_city,
+        "cheapest_city": cheapest_city
+    }
+    
+    
 
 def avg_price_by_fuel(db: Session):
     query = text("""
