@@ -65,6 +65,7 @@ https://templatemo.com/tm-607-glass-admin
                                 <span class="nav-badge">Model</span>
                             </a>
                         </li>
+                        {% if user and user.role =="admin" %}
                         <li class="nav-item">
                             <a href="{{ url_for('user_page') }}" class="nav-link">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -77,6 +78,8 @@ https://templatemo.com/tm-607-glass-admin
                                 Users
                             </a>
                         </li>
+                        {% endif %}
+                        <!-- {% if user and user.role =="admin" %}
                         <li class="nav-item">
                             <a href="{{ url_for('settings_page') }}" class="nav-link">
                                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -87,10 +90,11 @@ https://templatemo.com/tm-607-glass-admin
                                 </svg>
                                 Settings
                             </a>
-                        </li>
+                        </li> -->
+                      <!-- {% endif %} -->
+
                     </ul>
                 </li>
-
                 <li class="nav-section">
                     <span class="nav-section-title">Account</span>
                     <ul>

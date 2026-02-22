@@ -56,9 +56,12 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(150), unique=True)
+    lastname = Column(String(100))
     email = Column(String(150), unique=True)
+    phone = Column(String(13))
     password = Column(String(255))
     role = Column(String(50), default="user")
+    bio = Column(String(500))
 
 Base.metadata.create_all(bind=engine)
 
@@ -147,8 +150,18 @@ def prediction_page(request: Request):
     response.headers["Expires"] = "0"
     return response
 
+
+def require_role(role: str):
+    def checker(request: Request):
+        user = getattr(request.state, "user", None)
+        if not user or user.role != role:
+            raise HTTPException(status_code=403, detail="Access denied")
+        return user
+    return checker
+
+
 @app.get("/user", response_class=HTMLResponse)
-def user_page(request: Request):
+def user_page(request: Request, user: User = Depends(require_role("admin"))):
     user = getattr(request.state, "user", None)
     role = getattr(request.state, "role", None)
     if not user:
@@ -160,7 +173,7 @@ def user_page(request: Request):
     return response
 
 @app.get("/settings", response_class=HTMLResponse)
-def settings_page(request: Request):
+def settings_page(request: Request, user: User = Depends(require_role("admin"))):
     user = getattr(request.state, "user", None)
     role = getattr(request.state, "role", None)
     if not user:
