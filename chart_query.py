@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from database import get_db
-
 def cars_by_transmission(db: Session):
     query = text("""
         SELECT Transmission AS label, COUNT(*) AS value

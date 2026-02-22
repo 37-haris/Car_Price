@@ -10,6 +10,8 @@ from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
 from starlette.middleware.base import BaseHTTPMiddleware
 import charts
+import user_query
+from user_query import insert_user
 import joblib as jbl
 import pandas as pd
 
@@ -161,16 +163,46 @@ def require_role(role: str):
 
 
 @app.get("/user", response_class=HTMLResponse)
-def user_page(request: Request, user: User = Depends(require_role("admin"))):
-    user = getattr(request.state, "user", None)
+def user_page(request: Request, db: Session = Depends(get_db), user: User = Depends(require_role("admin"))):
+    users = user_query.get_all_users(db)
+    # user = getattr(request.state, "user", None)
     role = getattr(request.state, "role", None)
+    count_allusers = user_query.count_users(db)
+    normal_users = user_query.get_all_normal_users(db)
+    admin_users = user_query.get_all_admin_users(db)
     if not user:
         return RedirectResponse("/login", status_code=303)
-    response = templates.TemplateResponse("users.html", {"request": request, "user": user, "role": role})
+    response = templates.TemplateResponse("users.html", {"request": request, "user": user, "role": role, "users": users, "count_allusers": count_allusers, "normal_users": normal_users, "admin_users": admin_users})
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+@app.post("/add-user")
+def add_user(
+    name: str = Form(...),
+    lastname: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(...),
+    password: str = Form(...),
+    role: str = Form(...),
+    bio: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    hashed_password = pwd_context.hash(password)
+
+    insert_user(
+        db,
+        name=name,
+        lastname=lastname,
+        email=email,
+        phone=phone,
+        password=hashed_password,
+        role=role,
+        bio=bio
+    )
+
+    return RedirectResponse("/user", status_code=303)
 
 @app.get("/settings", response_class=HTMLResponse)
 def settings_page(request: Request, user: User = Depends(require_role("admin"))):
