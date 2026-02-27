@@ -52,30 +52,30 @@ def brands_per_model(db: Session):
     query = text("""
         SELECT 
             SUBSTRING_INDEX(Name, ' ', 1) AS brand,
-            SUBSTRING_INDEX(SUBSTRING_INDEX(Name, ' ', 2), ' ', -1) AS model,
             COUNT(*) as count
         FROM info
         WHERE Name IS NOT NULL
-        GROUP BY brand, model
+        GROUP BY brand
         ORDER BY count DESC
         LIMIT 30
+        
     """)
     result = db.execute(query).fetchall()
-    return [{"brand": row.brand, "model": row.model, "count": row.count} for row in result]
+    return [{"model": row.brand, "count": row.count} for row in result]
 
 
 def owner_type_price(db: Session):
     query = text("""
-        SELECT Owner_Type, ROUND(AVG(Price), 2) as avg_price, 
+        SELECT Fuel_Type, ROUND(AVG(Price), 2) as avg_price, 
                ROUND(MIN(Price), 2) as min_price, 
                ROUND(MAX(Price), 2) as max_price
         FROM info
-        WHERE Price IS NOT NULL AND Owner_Type IS NOT NULL
-        GROUP BY Owner_Type
+        WHERE Price IS NOT NULL AND Fuel_Type IS NOT NULL
+        GROUP BY Fuel_Type
         ORDER BY avg_price DESC
     """)
     result = db.execute(query).fetchall()
-    return [{"owner_type": row.Owner_Type, "avg_price": row.avg_price, 
+    return [{"owner_type": row.Fuel_Type, "avg_price": row.avg_price, 
              "min_price": row.min_price, "max_price": row.max_price} for row in result]
 
 
@@ -150,7 +150,6 @@ def price_evolution(db: Session):
         SELECT 
             SUBSTRING_INDEX(Name, ' ', 1) AS brand,
             Year,
-            Fuel_Type,
             ROUND(AVG(Price), 2) as avg_price
         FROM info
         WHERE Price IS NOT NULL AND Name IS NOT NULL
@@ -160,7 +159,7 @@ def price_evolution(db: Session):
     result = db.execute(query).fetchall()
     grouped = {}
     for row in result:
-        key = f"{row.brand} - {row.Fuel_Type}"
+        key = f"{row.brand}"
         if key not in grouped:
             grouped[key] = []
         grouped[key].append({"year": row.Year, "avg_price": row.avg_price})

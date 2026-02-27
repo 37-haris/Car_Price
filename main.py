@@ -1,3 +1,5 @@
+from urllib import request
+
 from fastapi import FastAPI, Request, Form, Depends, HTTPException
 from contextlib import asynccontextmanager
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -9,13 +11,16 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from passlib.context import CryptContext
 from itsdangerous import URLSafeSerializer
 from starlette.middleware.base import BaseHTTPMiddleware
-import charts
+import Charts
 import user_query
 from user_query import insert_user
 import joblib as jbl
 import pandas as pd
 
+
 # App Setup
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.ml_models = jbl.load("model.pkl")
@@ -23,10 +28,10 @@ async def lifespan(app: FastAPI):
     yield
     app.state.ml_models = None
     print("Model unloaded successfully")
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, title="Car Price Prediction API", description="A FastAPI application for predicting car prices with user authentication and role-based access control.", version="0.90")
 
 app.mount("/static", StaticFiles(directory="template/static"), name="static")
-app.include_router(charts.router, prefix="/charts", tags=["Charts"])
+app.include_router(Charts.router, prefix="/charts", tags=["Charts"])
 templates = Jinja2Templates(directory="template")
 
 # Database
@@ -35,9 +40,10 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
-num= ['Year', 'Kilometers_Driven', 'Consommation', 'Engine']
+num = ['Year', 'Kilometers_Driven', 'Consommation', 'Engine']
 cat = ['Location', 'Fuel_Type', 'Transmission', 'Owner_Type', 'Brand',
        'Model']
+
 
 class Body(BaseModel):
     Fuel_Type: str
@@ -50,8 +56,6 @@ class Body(BaseModel):
     Kilometers_Driven: float
     Engine: float
     Consommation: float
-    
-    
 
 
 class User(Base):
@@ -65,7 +69,9 @@ class User(Base):
     role = Column(String(50), default="user")
     bio = Column(String(500))
 
+
 Base.metadata.create_all(bind=engine)
+
 
 def get_db():
     db = SessionLocal()
@@ -74,14 +80,18 @@ def get_db():
     finally:
         db.close()
 
+
 # Security
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 serializer = URLSafeSerializer("supersecretkey")
 
 # Middleware
+
+
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         public_paths = ["/login", "/register", "/static"]
+        admin_paths = ["/docs", "/redoc", "/openapi.json"]
         if any(request.url.path.startswith(path) for path in public_paths):
             return await call_next(request)
 
@@ -105,26 +115,44 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         request.state.user = user
         request.state.role = user.role
+    
+        if any(request.url.path.startswith(path) for path in admin_paths):
+            if user.role != "admin":
+                return RedirectResponse("/", status_code=303)
+
         return await call_next(request)
+
 
 app.add_middleware(AuthMiddleware)
 
 # Routes
-@app.get("/", response_class=HTMLResponse)
+
+@app.post("/login", tags=["Auth"], summary='Login Route')
+def login(email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+    if not user or not pwd_context.verify(password, user.password):
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+    response = RedirectResponse("/", status_code=303)
+    token = serializer.dumps(user.email)
+    response.set_cookie("session", token)
+    return response
+
+@app.get("/", response_class=HTMLResponse, tags=["Charts"], summary='Home Page / Dashboard')
 def home(request: Request):
     user = getattr(request.state, "user", None)
     role = getattr(request.state, "role", None)
     if not user:
         return RedirectResponse("/login", status_code=303)
-    response = templates.TemplateResponse("index.html", {"request": request, "user": user, "role": role})
+    response = templates.TemplateResponse(
+        "index.html", {"request": request, "user": user, "role": role})
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
 
-@app.post("/predict")
+
+@app.post("/predict", tags=["Prediction"], summary='route of the Model Prediction')
 async def predict(body: Body):
-    print(body)
     df = pd.DataFrame([{
         "Brand": body.Brand,
         "Model": body.Model,
@@ -140,13 +168,15 @@ async def predict(body: Body):
     result = app.state.ml_models.predict(df)[0]
     return {"result": float(result)}
 
-@app.get("/prediction", response_class=HTMLResponse)
+
+@app.get("/prediction", response_class=HTMLResponse, tags=["Prediction"], summary='Prediction Page (Only for Authenticated Users)')
 def prediction_page(request: Request):
     user = getattr(request.state, "user", None)
     role = getattr(request.state, "role", None)
     if not user:
         return RedirectResponse("/login", status_code=303)
-    response = templates.TemplateResponse("prediction.html", {"request": request, "user": user, "role": role})
+    response = templates.TemplateResponse(
+        "prediction.html", {"request": request, "user": user, "role": role})
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
@@ -161,8 +191,15 @@ def require_role(role: str):
         return user
     return checker
 
+@app.get("/admin", response_class=HTMLResponse, tags=["Admin"],summary='Admin Page (Only for Admins)')
+def admin_page(request: Request):
+    user = getattr(request.state, "user", None)
+    if not user or user.role != "admin":
+        return RedirectResponse("/", status_code=303)
 
-@app.get("/user", response_class=HTMLResponse)
+    return {"message": "Welcome Admin 🔥"}
+
+@app.get("/user", response_class=HTMLResponse, tags=["Admin"], summary='User Management Page (Only for Admins)')
 def user_page(request: Request, db: Session = Depends(get_db), user: User = Depends(require_role("admin"))):
     users = user_query.get_all_users(db)
     # user = getattr(request.state, "user", None)
@@ -172,13 +209,15 @@ def user_page(request: Request, db: Session = Depends(get_db), user: User = Depe
     admin_users = user_query.get_all_admin_users(db)
     if not user:
         return RedirectResponse("/login", status_code=303)
-    response = templates.TemplateResponse("users.html", {"request": request, "user": user, "role": role, "users": users, "count_allusers": count_allusers, "normal_users": normal_users, "admin_users": admin_users})
+    response = templates.TemplateResponse("users.html", {"request": request, "user": user, "role": role,
+                                          "users": users, "count_allusers": count_allusers, "normal_users": normal_users, "admin_users": admin_users})
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
 
-@app.post("/add-user")
+
+@app.post("/add-user", tags=["Admin"])
 def add_user(
     name: str = Form(...),
     lastname: str = Form(...),
@@ -204,23 +243,27 @@ def add_user(
 
     return RedirectResponse("/user", status_code=303)
 
-@app.get("/settings", response_class=HTMLResponse)
+
+@app.get("/settings", response_class=HTMLResponse, tags=["Admin"], summary='Settings feature (Only for Admins)')
 def settings_page(request: Request, user: User = Depends(require_role("admin"))):
     user = getattr(request.state, "user", None)
     role = getattr(request.state, "role", None)
     if not user:
         return RedirectResponse("/login", status_code=303)
-    response = templates.TemplateResponse("settings.html", {"request": request, "user": user, "role": role})
+    response = templates.TemplateResponse(
+        "settings.html", {"request": request, "user": user, "role": role})
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
 
-@app.get("/login", response_class=HTMLResponse)
+
+@app.get("/login", response_class=HTMLResponse, tags=["Auth"], summary='Login Page')
 def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
-@app.post("/register")
+
+@app.post("/register", tags=["Admin"], summary='Register Route related to BDD (Only for Admins)')
 def register(name: str = Form(...), email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == email).first():
         raise HTTPException(status_code=400, detail="Email exists")
@@ -230,32 +273,20 @@ def register(name: str = Form(...), email: str = Form(...), password: str = Form
     db.commit()
     return RedirectResponse("/login", status_code=303)
 
-@app.post("/login")
-def login(email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == email).first()
-    if not user or not pwd_context.verify(password, user.password):
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-    response = RedirectResponse("/", status_code=303)
-    token = serializer.dumps(user.email)
-    response.set_cookie("session", token)
-    return response
 
-@app.get("/profile", response_class=HTMLResponse)
+@app.get("/profile", response_class=HTMLResponse, tags=["Admin"], summary='Profile Page (Only for Authenticated Users)')
 def profile(request: Request):
     user = getattr(request.state, "user", None)
     if not user:
         return RedirectResponse("/login", status_code=303)
     return f"<h2>Profile Page</h2><p>Name: {user.name}</p><p>Email: {user.email}</p><p>Role: {user.role}</p><a href='/'>Home</a>"
 
-@app.get("/admin")
-def admin_page(request: Request):
-    user = getattr(request.state, "user", None)
-    if not user or user.role != "admin":
-        return RedirectResponse("/", status_code=303)
-    return {"message": "Welcome Admin 🔥"}
 
-@app.get("/logout")
+
+@app.get("/logout", tags=["Auth"], summary='Logout Route')
 def logout():
     response = RedirectResponse("/login", status_code=303)
     response.delete_cookie("session")
     return response
+
+
